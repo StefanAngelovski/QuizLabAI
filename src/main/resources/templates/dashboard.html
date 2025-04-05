@@ -1,0 +1,96 @@
+<div th:replace="~{layout :: html(~{::title}, ~{::main}, ~{}, ~{})}" xmlns:sec="http://www.w3.org/1999/xhtml">
+  <title>Statistics</title>
+  <main>
+    <div class="row align-items-center">
+      <!-- Show cards based on their role Student, Professor ... -->
+      <div sec:authorize="hasAnyRole('Student', 'Admin')" class="col-12 col-md-4 col-lg-4 mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center">
+              <h1><img th:src="@{/images/quiz_img.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow"></h1>
+              <h2>Quizzes Overview</h2>
+              <br />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4 col-lg-4 mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center">
+              <h1><img th:src="@{/images/studying_materials.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow"></h1>
+              <h2>Studying Materials</h2>
+              <br />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4 col-lg-4 mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center">
+              <h1><img th:src="@{/images/completed_quizzes.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow"></h1>
+              <h2>Completed Quizzes</h2>
+              <br />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4 col-lg-4 mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center">
+              <h1><img th:src="@{/images/average_score.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow"></h1>
+              <h2>Average Score</h2>
+              <br />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4 col-lg-4 mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center">
+              <h1><img th:src="@{/images/time_spent.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow"></h1>
+              <h2>Time Spent</h2>
+              <br />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4 col-lg-4 mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center">
+              <h1><img th:src="@{/images/personal_progress_tracker.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow"></h1>
+              <h2>Personal Progress Tracker</h2>
+              <br />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4 col-lg-4 mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center">
+              <h1><img th:src="@{/images/passed_quizzes.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow"></h1>
+              <h1>Passed Quizzes</h1>
+              <p>5</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4 col-lg-4 mt-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center">
+              <h1><img th:src="@{/images/failed_quizzes.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow"></h1>
+              <h2>Failed Quizzes</h2>
+              <p>3</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

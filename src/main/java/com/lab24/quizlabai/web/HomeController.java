@@ -12,4 +12,19 @@ public class HomeController {
         return "index";
     }
 
+    @GetMapping({"/statistics"})
+    public String showStatisticsPage() {
+        return "statistics";
+    }
+
+    @GetMapping({"/quizManagement"})
+    public String showQuizManagement() {
+        return "quizManagement";
+    }
+
+    @GetMapping({"/dashboard"})
+    public String showDashboard() {
+        return "dashboard";
+    }
+
 }
