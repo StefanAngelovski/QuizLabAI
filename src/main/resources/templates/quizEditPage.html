@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizLabAI - Quiz Edit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/2662512c9c.js" crossorigin="anonymous"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+            margin-right: 5px;
+        }
+
+        .logo-text span {
+            color: #ff0000;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ff0000;
+        }
+
+        .user-icon {
+            font-size: 28px;
+        }
+
+        /* Main content styles */
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 15px;
+            flex: 1;
+        }
+
+        .quiz-name {
+            margin-bottom: 20px;
+            font-weight: normal;
+            color: #333;
+        }
+
+        .question-card {
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .question-header {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .question-type {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .question-body {
+            padding: 15px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .option-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .add-answer-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #666;
+            border: none;
+            background: transparent;
+            padding: 5px 0;
+            margin-top: 15px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .add-answer-btn:hover {
+            color: #333;
+        }
+
+        .question-actions {
+            display: flex;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .question-action-btn {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border: none;
+            background: white;
+            cursor: pointer;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .question-action-btn:hover {
+            background-color: #f9f9f9;
+        }
+
+        .question-action-btn:first-child {
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .add-question-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /*gap: 10px;*/
+            padding: 15px;
+            background-color: white;
+            border: 1px dashed #ccc;
+            border-radius: 5px;
+            width: 100%;
+            cursor: pointer;
+            color: #666;
+            /*margin-bottom: 20px;*/
+        }
+
+        .add-question-btn:hover {
+            background-color: #f9f9f9;
+        }
+
+        .quiz-actions {
+            display: flex;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .quiz-action-btn {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            border: none;
+            background: white;
+            cursor: pointer;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .quiz-action-btn:hover {
+            background-color: #f9f9f9;
+        }
+
+        .quiz-action-btn:first-child {
+            border-right: 1px solid #e0e0e0;
+        }
+        .red-circle {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 300px;
+            height: 300px;
+            border: 2px solid #ff0000;
+            border-radius: 50%;
+            margin-left: -100px;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<div class="header">
+    <div class="logo">
+        <div class="logo-icon">🎓</div>
+        <div class="logo-text">Quiz<span>LabAI</span></div>
+    </div>
+
+    <div class="page-title">
+        Quiz Edit
+    </div>
+
+    <div class="user-profile">
+        <div class="user-icon">👤</div>
+        <div>Professor</div>
+    </div>
+</div>
+
+<!-- Main content -->
+<div class="container">
+    <h5 class="quiz-name">Quiz Name: Algorithms and data structures Quiz 1</h5>
+
+    <div class="question-card">
+        <div class="question-header">
+            <div class="question-title">Question 1 :</div>
+            <div class="question-type">Type: [MCQ/TF/Open]</div>
+            <div>Answers:</div>
+        </div>
+        <div class="question-body">
+            <div class="options-grid">
+                <div class="option-item">
+                    <input type="checkbox" id="optionA">
+                    <label for="optionA">Option A</label>
+                </div>
+                <div class="option-item">
+                    <input type="checkbox" id="optionC">
+                    <label for="optionC">Option C</label>
+                </div>
+                <div class="option-item">
+                    <input type="checkbox" id="optionB">
+                    <label for="optionB">Option B</label>
+                </div>
+                <div class="option-item">
+                    <input type="checkbox" id="optionD">
+                    <label for="optionD">Option D</label>
+                </div>
+            </div>
+            <button class="add-answer-btn">
+                <span>+</span> Add Answer
+            </button>
+        </div>
+        <div class="question-actions">
+            <button class="question-action-btn">Delete Question</button>
+            <button class="question-action-btn">Regenerate with AI</button>
+        </div>
+
+        <button class="add-question-btn">
+            <span>+&nbsp;</span> Add Question
+        </button>
+
+        <div class="quiz-actions">
+            <button class="quiz-action-btn">Save Changes</button>
+            <button class="quiz-action-btn">Preview Quiz</button>
+        </div>
+    </div>
+</div>
+<div class="red-circle"></div>
+<footer class="bg-black py-4 text-white">
+    <div class="text-center">
+        <p class="mb-0">© 2025 QuizLab AI. All rights reserved.</p>
+    </div>
+</footer>
+</body>
+</html>

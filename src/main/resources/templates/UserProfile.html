@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizLabAI - User Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/2662512c9c.js" crossorigin="anonymous"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+            margin-right: 5px;
+        }
+
+        .logo-text span {
+            color: #ff0000;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ff0000;
+        }
+
+        .user-icon {
+            font-size: 28px;
+        }
+
+        /* Main content styles */
+        .container {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+            width: 200px;
+            background-color: #f8f8f8;
+            padding: 20px 10px;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .sidebar-item {
+            padding: 10px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .sidebar-item:hover {
+            background-color: #e8e8e8;
+        }
+
+        .sidebar-item i {
+            margin-right: 10px;
+        }
+
+        .sidebar-item.active {
+            background-color: #e0e0e0;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: #666;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn-success {
+            background-color: #4CAF50;
+        }
+
+        .profile{
+            border-radius: 5px;
+            background-color: white;
+        }
+
+        .profile-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 5px;
+            border-top: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-picture-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-picture {
+            width: 100px;
+            height: 100px;
+            margin-right: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .picture-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .profile-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .font {
+            font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        textarea.form-control {
+            height: 100px;
+            resize: none;
+        }
+
+        .form-actions {
+            grid-column: 1 / span 2;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-danger {
+            background-color: #f44336;
+        }
+
+        .logout {
+            margin-top: auto;
+            padding: 15px 10px;
+            display: flex;
+            align-items: center;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .logout i {
+            margin-right: 10px;
+        }
+
+        .export-btn {
+            background-color: rgb(255, 207, 207);
+            color: #ff0000;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .export-btn:hover {
+            background-color: rgb(255, 182, 182);
+        }
+
+        .upgrade-plan-btn {
+            background-color: palegreen;
+            color: #2d792e;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .upgrade-plan-btn:hover {
+            background-color: #75ff75;
+        }
+
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="logo">
+        <div class="logo-icon">🎓</div>
+        <div class="logo-text">Quiz<span>LabAI</span></div>
+    </div>
+
+    <div class="nav-links font ml-5">
+        <a href="#">How it works?</a>
+        <a href="#">Features</a>
+        <a href="#">About us</a>
+    </div>
+
+    <div class="user-profile">
+        <div class="user-icon">👤</div>
+        <div>User 1 ▼</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="sidebar">
+
+        <div class="font pd-5 text-secondary">Manage Quizzes</div>
+        <br/>
+
+        <div class="sidebar-item">
+            <i>📈</i> Grades
+        </div>
+        <div class="sidebar-item">
+            <i>✏️</i> Create Quiz
+        </div>
+        <div class="sidebar-item">
+            <i>📝</i> Submitted Quizzes
+        </div>
+        <div class="sidebar-item">
+            <i>📋</i> Reports & Analytics
+        </div>
+        <div class="sidebar-item">
+            <i>👥</i> Students
+        </div>
+        <div class="sidebar-item">
+            <i>📊</i> Statistics
+        </div>
+
+        <div class="logout">
+            <i>🚪</i> Logout
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="breadcrumb">
+            <span>🏠</span>
+            <a href="/home">Home </a> /
+            <a href="#" class="font"> User Profile</a> /
+            <span> Profile Settings</span>
+        </div>
+        <div class="profile">
+            <div class="profile-header p-3">
+                <h2 class="text-secondary">User Profile:</h2>
+                <div class="profile-actions">
+                    <button class="export-btn font">
+                        <i class="fa-solid fa-cloud-arrow-down"></i> Export report
+                    </button>
+                    <button class="upgrade-plan-btn font">
+                        <i class="fa-solid fa-crown"></i> Upgrade Plan
+                    </button>
+                </div>
+            </div>
+
+            <div class="profile-content">
+                <div class="profile-picture-section">
+                    <div class="profile-picture bg-dark">
+                        <img src="/api/placeholder/100/100" alt="Profile Picture"/>
+                    </div>
+                    <div>
+                        <h3 class="p-2 text-secondary">Profile Picture</h3>
+                        <div class="picture-actions p-2">
+                            <button class="btn btn-danger font">
+                                <i class="fa-solid fa-arrow-up-from-bracket"> </i> Change Image
+                            </button>
+                            <button class="btn btn-success">
+                                <i class="fa-solid fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    <div style="margin-left: auto;">
+                        <button class="btn btn-danger">
+                            <i class="fa-solid fa-arrows-rotate"></i> Restore Changes
+                        </button>
+                    </div>
+                </div>
+
+                <form class="profile-form">
+                    <div class="form-group">
+                        <label>User Name :</label>
+                        <input type="text" class="form-control" placeholder="Enter Name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email :</label>
+                        <input type="email" class="form-control" placeholder="Enter Email">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Designation :</label>
+                        <input type="text" class="form-control" placeholder="Enter Designation">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Language :</label>
+                        <input type="text" class="form-control" value="English">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone Number :</label>
+                        <input type="tel" class="form-control" placeholder="Enter Number">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Website :</label>
+                        <input type="url" class="form-control" placeholder="https://www.website.com">
+                    </div>
+
+                    <div class="form-group" style="grid-column: 1 / span 2;">
+                        <label>Adress :</label>
+                        <textarea class="form-control" placeholder="Adress"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                        <button type="button" class="btn btn-danger">Deactivate Account</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+<footer class="bg-black py-4 text-white">
+    <div class="text-center">
+        <p class="mb-0">© 2025 QuizLab AI. All rights reserved.</p>
+    </div>
+</footer>
+</html>
