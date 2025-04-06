@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QuizLab AI - Quiz Generation AI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    html, body {
+      height: 100%;
+    }
+    body {
+      flex-direction: column;
+      background-color: #f4f4f9;
+      height: 100vh;
+    }
+    main {
+      display: flex;
+      flex: 1;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .navbar {
+      background-color: #d9534f !important; /* Red navbar */
+    }
+    .nav-link {
+      color: white !important;
+    }
+    footer {
+      background-color: black;
+      color: white;
+    }
+    .container-generation {
+      width: 70%;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 30px;
+      justify-content: center;
+      align-content: center;
+      justify-items: center;
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      width: 80%;
+    }
+
+    button {
+      width: 200px;
+      padding: 10px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    .separator{
+      width: 400px;
+      height: 5px;
+      background-color: #d9534f;
+      margin-bottom: 50px;
+    }
+
+    .intro{
+      color: darkgray;
+      font-weight: 700;
+      font-size: 20px;
+      padding-bottom: 20px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    .checkbox-group {
+      display: flex;
+      gap: 170px;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+    .checkbox-div{
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+
+    label{
+      font-weight: bold;
+      color: #333;
+    }
+    .group-number-pdf {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      width: 100%;
+      padding: 30px 0 30px 0;
+    }
+
+    .group-number-pdf div {
+      display: flex;
+      flex-direction: column;
+      width: 48%;
+    }
+
+    .group-number-pdf label {
+      margin-bottom: 5px;
+    }
+
+    .group-number-pdf input {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    .group-quiz {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .group-quiz {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      width: 100%;
+    }
+    .group-quiz div {
+      display: flex;
+      flex-direction: column;
+      width: 30%;
+    }
+
+    .group-quiz label {
+      margin-bottom: 5px;
+    }
+
+    .group-quiz input, .group-quiz select {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .group-quiz button {
+      padding: 8px 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      width: 170px;
+      height: auto;
+    }
+    .group-quiz button:hover {
+      background-color: #0056b3;
+    }
+
+
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/home">QuizLab AI</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/quiz-statistics">Quiz Statistics</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/quiz-management">Quiz Management</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/student-progress">Student Progress</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="/profile">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/login">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/register">Register</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+<main>
+  <div class="container-generation">
+    <h1>Generate Quiz</h1>
+    <div class="separator"></div>
+    <form action="/generate-quiz" method="post" enctype="multipart/form-data">
+
+      <label class="intro">Please fill in the fields:</label>
+
+      <label for="subject">Subject:</label>
+      <select id="subject" name="subject" required>
+        <option value="" disabled selected>Select a subject</option>
+        <option value="Math">Math</option>
+        <option value="Science">Science</option>
+        <option value="History">History</option>
+        <option value="Literature">Literature</option>
+        <option value="Geography">Geography</option>
+      </select>
+
+      <label for="topic">Topic:</label>
+      <input type="text" id="topic" name="topic" placeholder="Enter the topic for the quiz" required>
+
+      <div class="checkbox-div">
+      <label>Types of Questions:</label>
+        <p>Select one or more</p>
+      <div class="checkbox-group">
+        <label><input type="checkbox" name="questionType" value="Multiple Choice"> Multiple Choice</label>
+        <label><input type="checkbox" name="questionType" value="Fixed Choice"> Fixed Choice</label>
+        <label><input type="checkbox" name="questionType" value="Short Answer"> Short Answer</label>
+      </div>
+      </div>
+
+      <div class="group-number-pdf">
+        <div style="display: flex; flex-direction: column;">
+          <label for="numQuestions">Number of Questions:</label>
+          <input type="number" id="numQuestions" name="numQuestions" min="1" required>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <label for="pdfFile">Upload PDF:</label>
+          <input type="file" id="pdfFile" name="pdfFile" accept=".pdf" required>
+        </div>
+      </div>
+
+      <div class="group-quiz">
+        <div style="display: flex; flex-direction: column;">
+          <label for="quizTime">Quiz Time (in minutes):</label>
+          <input type="number" id="quizTime" name="quizTime" min="1" required>
+        </div>
+
+        <div style="display: flex; flex-direction: column;">
+      <label for="difficulty">Difficulty:</label>
+      <select id="difficulty" name="difficulty" required>
+        <option value="" disabled selected>Select difficulty level</option>
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+      </select>
+        </div>
+      <button type="submit">Generate Quiz</button>
+      </div>
+    </form>
+  </div>
+</main>
+</body>
+</html>
