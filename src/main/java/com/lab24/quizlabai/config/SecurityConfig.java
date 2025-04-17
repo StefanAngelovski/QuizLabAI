@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .formLogin(login -> login
                         .loginPage("/login")
                         .failureUrl("/login?error=BadCredentials")
-                        .defaultSuccessUrl("/", true)
+                        .defaultSuccessUrl("/dashboard", true)
                         .permitAll()
                 )
                 .logout(logout -> logout.logoutSuccessUrl("/login?logout").permitAll());

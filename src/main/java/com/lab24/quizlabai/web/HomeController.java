@@ -31,7 +31,7 @@ public class HomeController {
 
     @GetMapping({"/dashboard"})
     public String showDashboard(Model model, @AuthenticationPrincipal User user) {
-        Role role = user.getRole(); // Or whatever your User model uses to store the role
+        Role role = user.getRole();
         List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(role);
 
         model.addAttribute("sidebarItems", sidebarItems);
@@ -40,12 +40,22 @@ public class HomeController {
     }
 
     @GetMapping({"/student-progress"})
-    public String showStudentProgress() {
+    public String showStudentProgress(Model model, @AuthenticationPrincipal User user) {
+        Role role = user.getRole();
+        List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(role);
+
+        model.addAttribute("sidebarItems", sidebarItems);
+        model.addAttribute("username", user.getUsername());
         return "studentProgressPage";
     }
 
     @GetMapping({"/profile"})
-    public String showProfile() {
+    public String showProfile(Model model, @AuthenticationPrincipal User user) {
+        Role role = user.getRole();
+        List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(role);
+
+        model.addAttribute("sidebarItems", sidebarItems);
+        model.addAttribute("username", user.getUsername());
         return "UserProfile";
     }
 

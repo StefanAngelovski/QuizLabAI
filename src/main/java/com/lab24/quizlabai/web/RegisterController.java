@@ -36,7 +36,7 @@ public class RegisterController {
     ) {
         try {
             this.userService.register(username, password, repeatedPassword, email, Role.ROLE_STUDENT);
-            return "redirect:/login";
+            return "redirect:/dashboard";
         } catch (RuntimeException ex) {
             return "redirect:/register?error=" + ex.getMessage();
         }

@@ -284,8 +284,10 @@
     </div>
 
     <div class="user-profile">
-        <div class="user-icon">👤</div>
-        <div>Professor ▼</div>
+        <a href="/profile" class="d-flex align-items-center text-decoration-none text-dark">
+            <i class="user-icon me-2">👤</i>
+            <div th:text="${username}"></div>
+        </a>
     </div>
 </div>
 
@@ -294,23 +296,9 @@
     <div class="sidebar">
         <div class="manage-quizzes font">Manage Quizzes</div>
 
-        <div class="sidebar-item">
-            <i>📈</i> Grades
-        </div>
-        <div class="sidebar-item">
-            <i>✏️</i> Create Quiz
-        </div>
-        <div class="sidebar-item active">
-            <i>📝</i> Submitted Quizzes
-        </div>
-        <div class="sidebar-item">
-            <i>📋</i> Reports & Analytics
-        </div>
-        <div class="sidebar-item">
-            <i>👥</i> Students
-        </div>
-        <div class="sidebar-item">
-            <i>📊</i> Statistics
+        <div th:each="item : ${sidebarItems}" class="sidebar-item">
+            <i th:text="${item.emoji}"></i>
+            <span th:text="${item.title}">Grades</span>
         </div>
 
         <div class="logout">
