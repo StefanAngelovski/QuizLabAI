@@ -17,7 +17,7 @@ public class HomeController {
         return "statistics";
     }
 
-    @GetMapping({"/quizManagement"})
+    @GetMapping({"/quiz-management"})
     public String showQuizManagement() {
         return "quizManagement";
     }
@@ -25,6 +25,16 @@ public class HomeController {
     @GetMapping({"/dashboard"})
     public String showDashboard() {
         return "dashboard";
+    }
+
+    @GetMapping({"/student-progress"})
+    public String showStudentProgress() {
+        return "studentProgressPage";
+    }
+
+    @GetMapping({"/profile"})
+    public String showProfile() {
+        return "UserProfile";
     }
 
 }
