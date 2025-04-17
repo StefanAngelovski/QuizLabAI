@@ -295,9 +295,13 @@
   </div>
 
   <div class="user-profile">
-    <div class="user-icon">👤</div>
-    <div>Professor ▼</div>
+    <a href="/profile" class="d-flex align-items-center text-decoration-none text-dark">
+      <i class="user-icon me-2">👤</i>
+      <div th:text="${username}"></div>
+    </a>
   </div>
+
+
 </div>
 
 

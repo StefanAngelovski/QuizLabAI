@@ -35,7 +35,7 @@ public class HomeController {
         List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(role);
 
         model.addAttribute("sidebarItems", sidebarItems);
-
+        model.addAttribute("username", user.getUsername());
         return "dashboard";
     }
 
