@@ -2,6 +2,7 @@ package com.lab24.quizlabai.service.impl;
 
 import com.lab24.quizlabai.model.Role;
 import com.lab24.quizlabai.model.User;
+import com.lab24.quizlabai.model.exceptions.EmailAlreadyExistsException;
 import com.lab24.quizlabai.model.exceptions.InvalidArgumentsException;
 import com.lab24.quizlabai.model.exceptions.PasswordsDoNotMatchException;
 import com.lab24.quizlabai.model.exceptions.UsernameAlreadyExistsException;
@@ -35,6 +36,10 @@ public class UserServiceImpl implements UserService {
 
         if (this.userRepository.findByUsername(username).isPresent()) {
             throw new UsernameAlreadyExistsException(username);
+        }
+
+        if (this.userRepository.findByEmail(email).isPresent()) {
+            throw new EmailAlreadyExistsException(email);
         }
 
         User user = new User(username, passwordEncoder.encode(password), email, role);
