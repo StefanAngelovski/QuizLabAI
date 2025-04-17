@@ -269,7 +269,6 @@
       margin: 0;
     }
 
-    /* Ensure cards are the same size */
     .card {
       height: 100%;
       display: flex;
@@ -277,7 +276,6 @@
       justify-content: space-between;
     }
 
-    /* Make numbers smaller */
     .fs-4 {
       font-size: 1.25rem;
     }
@@ -307,23 +305,9 @@
   <div class="sidebar">
     <div class="manage-quizzes font">Manage Quizzes</div>
 
-    <div class="sidebar-item">
-      <i>📈</i> Grades
-    </div>
-    <div class="sidebar-item">
-      <i>✏️</i> Create Quiz
-    </div>
-    <div class="sidebar-item">
-      <i>📝</i> Submitted Quizzes
-    </div>
-    <div class="sidebar-item">
-      <i>📋</i> Reports & Analytics
-    </div>
-    <div class="sidebar-item">
-      <i>👥</i> Students
-    </div>
-    <div class="sidebar-item">
-      <i>📊</i> Statistics
+    <div th:each="item : ${sidebarItems}" class="sidebar-item">
+      <i th:text="${item.emoji}"></i>
+      <span th:text="${item.title}">Grades</span>
     </div>
 
     <div class="logout">
