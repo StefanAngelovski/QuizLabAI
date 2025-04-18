@@ -22,9 +22,7 @@ public enum SidebarItem {
     EDIT_QUIZ("Edit Quiz", "📝", Role.ROLE_PROFESSOR),
     SETTINGS("Settings", "⚙️", Role.ROLE_PROFESSOR, Role.ROLE_STUDENT);
 
-    @Getter
     private final String title;
-    @Getter
     private final String emoji;
     private final Role[] roles;
 
@@ -51,5 +49,13 @@ public enum SidebarItem {
             }
         }
         return visibleItems;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public String getEmoji() {
+        return this.emoji;
     }
 }

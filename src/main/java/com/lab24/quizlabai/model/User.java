@@ -13,7 +13,6 @@ import java.util.Collections;
 @Setter
 @Getter
 @Entity
-@NoArgsConstructor
 @Table(name = "user", schema = "public")
 public class User implements UserDetails {
     @Id
@@ -32,6 +31,7 @@ public class User implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
+    public User() {}
     public User(String username, String password, String email, Role role) {
         this.username = username;
         this.password = password;
@@ -47,6 +47,10 @@ public class User implements UserDetails {
     @Override
     public String getPassword() {
         return this.password;
+    }
+
+    public Role getRole() {
+        return role;
     }
 
     @Override
