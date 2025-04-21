@@ -25,18 +25,24 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/register").permitAll()
+                        .requestMatchers("/", "/home", "/register").permitAll()
                         .anyRequest()
                         .authenticated()
                 )
                 .formLogin(login -> login
                         .loginPage("/login")
-                        .failureUrl("/login?error=BadCredentials")
+                        .failureUrl("/login?error=Bad%20Credentials")
                         .defaultSuccessUrl("/dashboard", true)
                         .permitAll()
                 )
-                .logout(logout -> logout.logoutSuccessUrl("/login?logout").permitAll());
-
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
+                );
         return http.build();
     }
 

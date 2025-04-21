@@ -14,6 +14,11 @@ import java.util.List;
 @Controller
 public class HomeController {
 
+    @GetMapping({"/", "/home", "/index"})
+    public String getHome() {
+        return "index";
+    }
+
     @GetMapping({"/statistics"})
     public String showStatisticsPage() {
         return "statistics";
@@ -24,7 +29,7 @@ public class HomeController {
         return "quizManagement";
     }
 
-    @GetMapping({"/dashboard", "/", "/index"})
+    @GetMapping({"/dashboard"})
     public String showDashboard(Model model, @AuthenticationPrincipal User user) {
         Role role = user.getRole();
         List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(role);

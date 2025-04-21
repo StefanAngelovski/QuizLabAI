@@ -80,11 +80,16 @@
         }
 
         .sidebar-item {
-            padding: 10px;
+            padding: 10px 0 10px 10px;
             margin-bottom: 5px;
-            display: flex;
-            align-items: center;
+            text-align: left;
             cursor: pointer;
+        }
+
+        .sidebar-item a {
+            padding: 0;
+            text-align: left;
+            font-weight: normal;
         }
 
         .sidebar-item:hover {
@@ -295,12 +300,17 @@
         <br/>
 
         <div th:each="item : ${sidebarItems}" class="sidebar-item">
-            <i th:text="${item.emoji}"></i>
-            <span th:text="${item.title}">Grades</span>
+            <a th:href="@{/logout}" class="btn" style="text-decoration: none; color: black">
+                <i th:text="${item.emoji}"></i>
+                <span th:text="${item.title}">Grades</span>
+            </a>
         </div>
 
-        <div class="logout">
-            <i>🚪</i> Logout
+        <div class="logout sidebar-item">
+            <a th:href="@{/logout}" class="btn" style="text-decoration: none; color: black">
+                <i>🚪</i>
+                <span>Logout</span>
+            </a>
         </div>
     </div>
 
