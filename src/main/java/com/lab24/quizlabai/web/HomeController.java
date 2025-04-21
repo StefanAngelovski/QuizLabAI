@@ -14,11 +14,6 @@ import java.util.List;
 @Controller
 public class HomeController {
 
-    @GetMapping({"/", "/index"})
-    public String showHomePage() {
-        return "index";
-    }
-
     @GetMapping({"/statistics"})
     public String showStatisticsPage() {
         return "statistics";
@@ -29,7 +24,7 @@ public class HomeController {
         return "quizManagement";
     }
 
-    @GetMapping({"/dashboard"})
+    @GetMapping({"/dashboard", "/", "/index"})
     public String showDashboard(Model model, @AuthenticationPrincipal User user) {
         Role role = user.getRole();
         List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(role);
@@ -47,16 +42,6 @@ public class HomeController {
         model.addAttribute("sidebarItems", sidebarItems);
         model.addAttribute("username", user.getUsername());
         return "studentProgressPage";
-    }
-
-    @GetMapping({"/profile"})
-    public String showProfile(Model model, @AuthenticationPrincipal User user) {
-        Role role = user.getRole();
-        List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(role);
-
-        model.addAttribute("sidebarItems", sidebarItems);
-        model.addAttribute("username", user.getUsername());
-        return "UserProfile";
     }
 
 }

@@ -36,7 +36,7 @@ public class LoginController {
             return "redirect:/dashboard";
         } catch (RuntimeException ex) {
             model.addAttribute("hasError", true);
-            model.addAttribute("error", "TEST");
+            model.addAttribute("error", ex.getMessage());
             return "login";
         }
     }

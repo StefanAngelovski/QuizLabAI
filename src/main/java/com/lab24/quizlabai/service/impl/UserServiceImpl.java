@@ -2,22 +2,28 @@ package com.lab24.quizlabai.service.impl;
 
 import com.lab24.quizlabai.model.Role;
 import com.lab24.quizlabai.model.User;
-import com.lab24.quizlabai.model.exceptions.EmailAlreadyExistsException;
-import com.lab24.quizlabai.model.exceptions.InvalidArgumentsException;
-import com.lab24.quizlabai.model.exceptions.PasswordsDoNotMatchException;
-import com.lab24.quizlabai.model.exceptions.UsernameAlreadyExistsException;
+import com.lab24.quizlabai.model.exceptions.*;
 import com.lab24.quizlabai.repository.UserRepository;
 import com.lab24.quizlabai.service.UserService;
+import jakarta.transaction.Transactional;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private static final long MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -48,9 +54,67 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
     }
+
+    @Override
+    public void updateUser(User existingUser, User updatedUser, MultipartFile image) throws MaximumFileSizeException{
+        if (!existingUser.getUsername().equals(updatedUser.getUsername())) {
+            Optional<User> userByUsername = userRepository.findByUsername(updatedUser.getUsername());
+            if (userByUsername.isPresent() && !userByUsername.get().getId().equals(existingUser.getId())) {
+                throw new UsernameAlreadyExistsException(updatedUser.getUsername());
+            }
+        }
+
+        if (!existingUser.getEmail().equals(updatedUser.getEmail())) {
+            Optional<User> userByEmail = userRepository.findByEmail(updatedUser.getEmail());
+            if (userByEmail.isPresent() && !userByEmail.get().getId().equals(existingUser.getId())) {
+                throw new EmailAlreadyExistsException(updatedUser.getEmail());
+            }
+        }
+
+        existingUser.setUsername(updatedUser.getUsername());
+        existingUser.setFirstName(updatedUser.getFirstName());
+        existingUser.setLastName(updatedUser.getLastName());
+        existingUser.setEmail(updatedUser.getEmail());
+
+        if (image != null && !image.isEmpty()) {
+            if (image.getSize() > MAX_FILE_SIZE) {
+                throw new MaximumFileSizeException(2);
+            }
+            try {
+                existingUser.setProfileImage(image.getBytes());
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to upload image", e);
+            }
+        }
+
+        userRepository.save(existingUser);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(existingUser, null, existingUser.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    @Override
+    public void removeProfileImage(Long id) {
+        Optional<User> optionalUser = userRepository.findById(String.valueOf(id));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setProfileImage(null);
+            userRepository.save(user);
+        }
+    }
+
+    @Override
+    public byte[] getProfileImage(Long id) throws ProfilePictureNotFoundException {
+        return userRepository.findById(String.valueOf(id))
+                .filter(user -> user.getProfileImage() != null)
+                .map(User::getProfileImage)
+                .orElseThrow(ProfilePictureNotFoundException::new);
+    }
+
 }
 
 

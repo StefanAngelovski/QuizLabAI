@@ -2,7 +2,6 @@ package com.lab24.quizlabai.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +18,12 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
+    private String firstName;
+
+    @Column
+    private String lastName;
+
     @Column(nullable = false, unique = true)
     private String username;
 
@@ -31,12 +36,19 @@ public class User implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
+    @Lob
+    @Column(name = "profile_image")
+    private byte[] profileImage;
+
     public User() {}
     public User(String username, String password, String email, Role role) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.role = role;
+        this.profileImage = null;
+        this.firstName = null;
+        this.lastName = null;
     }
 
     @Override
