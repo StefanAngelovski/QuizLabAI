@@ -10,42 +10,9 @@
   <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
-<div class="header">
-  <div class="logo">
-    <div class="logo-icon">🎓</div>
-    <div class="logo-text">Quiz<span>LabAI</span></div>
-  </div>
-
-  <div class="nav-links font">
-    <a href="#">How it works?</a>
-    <a href="#">Features</a>
-    <a href="#">About us</a>
-  </div>
-
-  <div class="user-profile">
-    <a href="/profile" class="d-flex align-items-center text-decoration-none text-dark">
-      <span class="user-icon me-2">👤</span>
-      <div th:text="${username}"></div>
-    </a>
-  </div>
-
-</div>
-
-
+<div th:replace="~{fragments/header.html}"></div>
 <div class="container">
-  <div class="sidebar">
-    <div class="manage-quizzes font">Manage Quizzes</div>
-
-    <div th:each="item : ${sidebarItems}" class="sidebar-item">
-      <span th:text="${item.emoji}"></span>
-      <span th:text="${item.title}">Grades</span>
-    </div>
-
-    <div class="logout">
-      <span>🚪</span> Logout
-    </div>
-  </div>
-
+  <div th:replace="~{fragments/sidebar.html}"></div>
   <div class="content">
     <div class="breadcrumb">
       <span>🏠</span>

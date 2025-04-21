@@ -10,48 +10,9 @@
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
 <body>
-<div class="header">
-    <div class="logo">
-        <div class="logo-icon">🎓</div>
-        <div class="logo-text">Quiz<span>LabAI</span></div>
-    </div>
-
-    <div class="nav-links font ml-5">
-        <a href="#">How it works?</a>
-        <a href="#">Features</a>
-        <a href="#">About us</a>
-    </div>
-
-    <div class="user-profile">
-        <a href="#" class="d-flex align-items-center text-decoration-none text-dark">
-            <span class="user-icon me-2">👤</span>
-            <div th:text="${username}"></div>
-        </a>
-    </div>
-
-</div>
-
+<div th:replace="~{fragments/header.html}"></div>
 <div class="container">
-    <div class="sidebar">
-
-        <div class="font pd-5 text-secondary">Manage Quizzes</div>
-        <br/>
-
-        <div th:each="item : ${sidebarItems}" class="sidebar-item">
-            <a th:href="@{/logout}" class="btn" style="text-decoration: none; color: black">
-                <span th:text="${item.emoji}"></span>
-                <span th:text="${item.title}">Grades</span>
-            </a>
-        </div>
-
-        <div class="logout sidebar-item">
-            <a th:href="@{/logout}" class="btn" style="text-decoration: none; color: black">
-                <i>🚪</i>
-                <span>Logout</span>
-            </a>
-        </div>
-    </div>
-
+    <div th:replace="~{fragments/sidebar.html}"></div>
     <div class="content">
         <div class="breadcrumb">
             <span>🏠</span>

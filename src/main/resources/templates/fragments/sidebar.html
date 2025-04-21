@@ -1,0 +1,15 @@
+<div class="sidebar">
+  <div class="manage-quizzes font">Manage Quizzes</div>
+
+  <div th:each="item : ${sidebarItems}" class="sidebar-item">
+    <span th:text="${item.emoji}"></span>
+    <span th:text="${item.title}">Grades</span>
+  </div>
+
+  <div class="logout sidebar-item">
+    <a th:href="@{/logout}" class="btn" style="text-decoration: none; color: black">
+      <span>🚪</span>
+      <span>Logout</span>
+    </a>
+  </div>
+</div>

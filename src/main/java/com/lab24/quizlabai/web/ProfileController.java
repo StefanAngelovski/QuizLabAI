@@ -44,7 +44,7 @@ public class ProfileController {
         model.addAttribute("sidebarItems", sidebarItems);
         model.addAttribute("user", existingUser);
         model.addAttribute("username", user.getUsername());
-        return "UserProfile";
+        return "userProfile";
     }
 
     @PostMapping("/update")
