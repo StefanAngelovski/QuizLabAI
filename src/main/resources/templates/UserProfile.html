@@ -24,7 +24,7 @@
 
     <div class="user-profile">
         <a href="#" class="d-flex align-items-center text-decoration-none text-dark">
-            <i class="user-icon me-2">👤</i>
+            <span class="user-icon me-2">👤</span>
             <div th:text="${username}"></div>
         </a>
     </div>
@@ -39,7 +39,7 @@
 
         <div th:each="item : ${sidebarItems}" class="sidebar-item">
             <a th:href="@{/logout}" class="btn" style="text-decoration: none; color: black">
-                <i th:text="${item.emoji}"></i>
+                <span th:text="${item.emoji}"></span>
                 <span th:text="${item.title}">Grades</span>
             </a>
         </div>

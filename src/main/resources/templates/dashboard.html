@@ -24,7 +24,7 @@
 
   <div class="user-profile">
     <a href="/profile" class="d-flex align-items-center text-decoration-none text-dark">
-      <i class="user-icon me-2">👤</i>
+      <span class="user-icon me-2">👤</span>
       <div th:text="${username}"></div>
     </a>
   </div>
@@ -37,12 +37,12 @@
     <div class="manage-quizzes font">Manage Quizzes</div>
 
     <div th:each="item : ${sidebarItems}" class="sidebar-item">
-      <i th:text="${item.emoji}"></i>
+      <span th:text="${item.emoji}"></span>
       <span th:text="${item.title}">Grades</span>
     </div>
 
     <div class="logout">
-      <i>🚪</i> Logout
+      <span>🚪</span> Logout
     </div>
   </div>
 
