@@ -1,37 +1,18 @@
-package com.lab24.quizlabai.model;
+package com.lab24.quizlabai.dto;
 
-import jakarta.persistence.*;
+import com.lab24.quizlabai.model.Question;
+import lombok.Data;
+
 import java.util.List;
 
-@Entity
-public class Quiz {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+@Data
+public class QuizResponseDto {
     private String subject;
     private String topic;
     private int numQuestions;
     private int quizTime;
     private String difficulty;
-
-    @ElementCollection
-    private List<String> questionTypes;
-
-    @Lob
-    private byte[] pdfFile;
-
-    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getSubject() {
         return subject;
@@ -71,22 +52,6 @@ public class Quiz {
 
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
-    }
-
-    public List<String> getQuestionTypes() {
-        return questionTypes;
-    }
-
-    public void setQuestionTypes(List<String> questionTypes) {
-        this.questionTypes = questionTypes;
-    }
-
-    public byte[] getPdfFile() {
-        return pdfFile;
-    }
-
-    public void setPdfFile(byte[] pdfFile) {
-        this.pdfFile = pdfFile;
     }
 
     public List<Question> getQuestions() {

@@ -1,72 +1,24 @@
 <div th:replace="~{layout :: html(~{::title}, ~{::main}, ~{}, ~{})}">
   <title>Statistics</title>
   <main>
-    <div class="row align-items-center">
-      <div class="col-12 col-md-4 col-lg-4 mt-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-flex flex-column align-items-center">
-              <h1><img th:src="@{/images/quiz_img.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow"></h1>
-              <h1>Quiz 1</h1>
-              <p>20</p>
+    <div class="container text-center mt-4">
+      <a href="/quizgeneration" class="btn btn-primary">Create Quiz</a>
+    </div>
+
+    <div class="row align-items-center mt-4">
+      <div th:each="quiz : ${quizzes}" class="col-12 col-md-4 col-lg-4 mt-3">
+        <a th:href="@{'/quiz-attempt/' + ${quiz.id}}" class="text-decoration-none text-dark">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <div class="d-flex flex-column align-items-center">
+                <img th:src="@{/images/quiz_img.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow mb-3">
+                <h4 th:text="${quiz.subject}">Quiz Subject</h4>
+                <p th:text="${quiz.topic}">Topic</p>
+                <p th:text="'Questions: ' + ${quiz.numQuestions}">Number of Questions</p>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-4 col-lg-4 mt-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-flex flex-column align-items-center">
-              <h1><img th:src="@{/images/quiz_img.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow"></h1>
-              <h1>Quiz 2</h1>
-              <p>3</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-4 col-lg-4 mt-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-flex flex-column align-items-center">
-              <h1><img th:src="@{/images/quiz_img.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow"></h1>
-              <h1>Quiz 3</h1>
-              <p>45</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-4 col-lg-4 mt-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-flex flex-column align-items-center">
-              <h1><img th:src="@{/images/quiz_img.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow"></h1>
-              <h1>Quiz 4</h1>
-              <p>65</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-4 col-lg-4 mt-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-flex flex-column align-items-center">
-              <h1><img th:src="@{/images/quiz_img.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow"></h1>
-              <h1>Quiz 5</h1>
-              <p>66</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-4 col-lg-4 mt-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-flex flex-column align-items-center">
-              <h1><img th:src="@{/images/quiz_img.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow"></h1>
-              <h1>Quiz 6</h1>
-              <p>3</p>
-            </div>
-          </div>
-        </div>
+        </a>
       </div>
     </div>
   </main>

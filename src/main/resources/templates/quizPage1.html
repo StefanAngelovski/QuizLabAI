@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <title>QuizLabAI - Quiz Page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
-    <title>QuizLabAI - Quiz Page 1</title>
     <style>
         * {
             margin: 0;
@@ -184,82 +183,124 @@
         <div class="logo-icon">🎓</div>
         <div class="logo-text">Quiz<span>LabAI</span></div>
     </div>
-
     <div class="page-title">
-        Quiz 1
+        Quiz <span th:text="${questionNumber}"></span>
     </div>
-
     <div class="user-profile">
         <div class="user-icon">👤</div>
-        <div>Tarun ▼</div>
+        <div th:text="${username}">Tarun ▼</div>
     </div>
 </div>
 
 <div class="container">
-    <div class="timer">Remaining Time : <span id="time">15:00</span></div>
+    <div class="timer">Remaining Time : <span id="time"></span></div>
 
-    <h5 class="quiz-name">Algorithms and data structures Quiz 1</h5>
-    <div class="progress">1/10</div>
+    <h5 class="quiz-name" th:text="${quiz.subject}">Algorithms and data structures Quiz 1</h5>
+    <div class="progress">
+        <span th:text="${questionNumber}"></span>/<span th:text="${totalQuestions}"></span>
+    </div>
 
     <div class="question-card">
         <div class="question-header">
-            <div class="question-title">Question 1: Which of the following sorting algorithms has the best average-case time complexity for sorting a randomly ordered list?</div>
-            <div class="question-type">Select one or more</div>
+            <div class="question-title">
+                <span th:text="'Question ' + ${questionNumber} + ': ' + ${question.text}"></span>
+            </div>
+            <div class="question-type" th:text="${question.type}">Select one or more</div>
             <div>Answers:</div>
         </div>
 
         <div class="question-body">
-            <div class="options-grid">
-                <div class="option-item">
-                    <input type="checkbox" id="optionA">
-                    <label for="optionA">A) QuickSort</label>
-                </div>
-                <div class="option-item">
-                    <input type="checkbox" id="optionC">
-                    <label for="optionC">C) Selection Sort</label>
-                </div>
-                <div class="option-item">
-                    <input type="checkbox" id="optionB">
-                    <label for="optionB">B) Bubble Sort</label>
-                </div>
-                <div class="option-item">
-                    <input type="checkbox" id="optionD">
-                    <label for="optionD">D) Insertion Sort</label>
-                </div>
-            </div>
+            <!-- Form for Next Question -->
+            <form method="post" th:action="@{/attempt/next}" th:if="${!isLastQuestion}">
+                <input type="hidden" name="questionId" th:value="${question.id}"/>
 
-            <div class="points">2 Points</div>
+                <!-- Options -->
+                <div class="options-grid" th:if="${question.type != 'short-answer'}">
+                    <div class="option-item" th:each="option, iterStat : ${question.options}">
+                        <input type="checkbox"
+                               th:id="'option' + ${iterStat.index}"
+                               name="selectedOptions"
+                               th:value="${option}"
+                               th:checked="${userAnswers != null && userAnswers[question.id] != null && userAnswers[question.id].contains(option)}">
+                        <label th:for="'option' + ${iterStat.index}" th:text="${option}">Option</label>
+                    </div>
+                </div>
+
+                <!-- Short Answer -->
+                <div th:if="${question.type == 'short-answer'}">
+                    <textarea name="shortAnswer" rows="4" cols="50" placeholder="Write your answer here..." th:text="${userAnswers != null && userAnswers[question.id] != null ? userAnswers[question.id] : ''}"></textarea>
+                </div>
+
+                <div class="points">
+                    <span th:text="${question.points}">2</span> Points
+                </div>
+
+                <div class="navigation">
+                    <button type="submit" class="next-btn btn btn-secondary">Next Question</button>
+                </div>
+            </form>
+
+            <!-- Form for Submit Quiz -->
+            <form method="post" th:action="@{/attempt/result/{quizId}(quizId=${quiz.id})}" th:if="${isLastQuestion}">
+                <input type="hidden" name="questionId" th:value="${question.id}"/>
+
+                <!-- Options -->
+                <div class="options-grid" th:if="${question.type != 'short-answer'}">
+                    <div class="option-item" th:each="option, iterStat : ${question.options}">
+                        <input type="checkbox"
+                               th:id="'optionFinal' + ${iterStat.index}"
+                               name="selectedOptions"
+                               th:value="${option}"
+                               th:checked="${userAnswers != null && userAnswers[question.id] != null && userAnswers[question.id].contains(option)}">
+                        <label th:for="'optionFinal' + ${iterStat.index}" th:text="${option}">Option</label>
+                    </div>
+                </div>
+
+                <!-- Short Answer -->
+                <div th:if="${question.type == 'short-answer'}">
+                    <textarea name="shortAnswer" rows="4" cols="50" placeholder="Write your answer here..." th:text="${userAnswers != null && userAnswers[question.id] != null ? userAnswers[question.id] : ''}"></textarea>
+                </div>
+
+                <div class="points">
+                    <span th:text="${question.points}">2</span> Points
+                </div>
+
+                <div class="navigation">
+                    <button type="submit" class="next-btn btn btn-danger">Submit Quiz</button>
+                </div>
+            </form>
         </div>
     </div>
-
-    <div class="navigation">
-        <button class="next-btn btn btn-secondary">Next Question</button>
-    </div>
 </div>
+
 <div class="red-circle"></div>
-<script>
-    // Timer functionality
-    let timeInSeconds = 15 * 60; // 15 minutes
-    const timerElement = document.getElementById('time');
 
-    function updateTimer() {
-        const minutes = Math.floor(timeInSeconds / 60);
-        const seconds = timeInSeconds % 60;
-        timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-
-        if (timeInSeconds > 0) {
-            timeInSeconds--;
-            setTimeout(updateTimer, 1000);
-        } else {
-            alert('Time is up!');
-        }
-    }
-    updateTimer();
-</script>
-</body>
 <footer class="bg-black py-4 text-white">
     <div class="text-center">
         <p class="mb-0">© 2025 QuizLab AI. All rights reserved.</p>
     </div>
 </footer>
+
+<script>
+    let timeInSeconds = localStorage.getItem('timeInSeconds') ? parseInt(localStorage.getItem('timeInSeconds')) : 15 * 60;
+    const timerElement = document.getElementById('time');
+
+    function updateTimer() {
+        const minutes = Math.floor(timeInSeconds / 60);
+        const seconds = timeInSeconds % 60;
+        timerElement.textContent = minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+
+        if (timeInSeconds > 0) {
+            timeInSeconds--;
+            localStorage.setItem('timeInSeconds', timeInSeconds);
+            setTimeout(updateTimer, 1000);
+        } else {
+            alert('Time is up!');
+        }
+    }
+
+    updateTimer();
+</script>
+
+</body>
 </html>
