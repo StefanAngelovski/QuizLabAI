@@ -1,6 +1,8 @@
 package com.lab24.quizlabai.service.impl;
 
 
+import com.azure.core.exception.ResourceNotFoundException;
+import com.azure.core.http.HttpResponse;
 import com.lab24.quizlabai.dto.QuizRequestDto;
 import com.lab24.quizlabai.dto.QuizResponseDto;
 import com.lab24.quizlabai.model.Question;
@@ -9,10 +11,13 @@ import com.lab24.quizlabai.model.Quiz;
 import com.lab24.quizlabai.repository.QuizRepository;
 import com.lab24.quizlabai.service.AzureAI.AzureOpenAIService;
 import com.lab24.quizlabai.service.QuizService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
@@ -76,7 +81,46 @@ public class QuizServiceImpl implements QuizService {
         if (quiz != null) {
 
             quiz.getQuestions().forEach(q -> q.getOptions().size());
+
+            if (quiz.getQuestionTypes() != null) {
+                quiz.getQuestionTypes().size();
+            }
         }
         return quiz;
+    }
+
+    @Override
+    public QuizResponseDto updateQuiz(Long id,
+                                      QuizRequestDto requestDto,
+                                      MultipartFile file) throws IOException {
+
+        Quiz existing = quizRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Quiz not found: " + id));
+
+        existing.setSubject(requestDto.getSubject());
+        existing.setTopic(requestDto.getTopic());
+        existing.setNumQuestions(requestDto.getNumQuestions());
+        existing.setQuizTime(requestDto.getQuizTime());
+        existing.setDifficulty(requestDto.getDifficulty());
+        existing.setQuestionTypes(requestDto.getQuestionTypes());
+
+        if (file != null && !file.isEmpty()) {
+            existing.setPdfFile(file.getBytes());
+        }
+
+        Quiz saved = quizRepository.save(existing);
+        QuizResponseDto dto = new QuizResponseDto();
+        dto.setSubject(saved.getSubject());
+        dto.setTopic(saved.getTopic());
+        dto.setNumQuestions(saved.getNumQuestions());
+        dto.setQuizTime(saved.getQuizTime());
+        dto.setDifficulty(saved.getDifficulty());
+        dto.setQuestions(saved.getQuestions());
+        return dto;
+    }
+
+
+    public void deleteQuiz(Long id) {
+        quizRepository.deleteById(id);
     }
 }

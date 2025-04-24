@@ -15,4 +15,8 @@ public interface QuizService {
     List<Quiz> getAllQuizzes();
 
     Quiz getQuizById(Long quizId);
+
+    QuizResponseDto updateQuiz(Long id, QuizRequestDto requestDto, MultipartFile file) throws IOException;
+
+    void deleteQuiz(Long id);
 }

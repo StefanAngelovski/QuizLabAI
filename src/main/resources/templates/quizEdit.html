@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>QuizLab AI - Quiz Generation AI</title>
+  <title>Edit Quiz - QuizLab AI</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     html, body {
@@ -179,29 +179,15 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="/dashboard">Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/quiz-statistics">Quiz Statistics</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/quiz-management">Quiz Management</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/student-progress">Student Progress</a>
-        </li>
+        <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="/quiz-statistics">Quiz Statistics</a></li>
+        <li class="nav-item"><a class="nav-link" href="/quiz-management">Quiz Management</a></li>
+        <li class="nav-item"><a class="nav-link" href="/student-progress">Student Progress</a></li>
       </ul>
       <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="/profile">Profile</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/login">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/register">Register</a>
-        </li>
+        <li class="nav-item"><a class="nav-link" href="/profile">Profile</a></li>
+        <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
       </ul>
     </div>
   </div>
@@ -209,63 +195,99 @@
 
 <main>
   <div class="container-generation">
-    <h1>Generate Quiz</h1>
+    <h1>Edit Quiz</h1>
     <div class="separator"></div>
-    <form id="quizGenerationForm" enctype="multipart/form-data">
-      <label class="intro">Please fill in the fields:</label>
+    <form id="quizEditForm" th:action="@{/edit-quiz/{id}(id=${quiz.id})}" method="post" enctype="multipart/form-data">
+      <label class="intro">Please update the fields below:</label>
 
       <label for="subject">Subject:</label>
       <select id="subject" name="subject" required>
-        <option value="" disabled selected>Select a subject</option>
-        <option value="Math">Math</option>
-        <option value="Science">Science</option>
-        <option value="History">History</option>
-        <option value="Literature">Literature</option>
-        <option value="Geography">Geography</option>
+        <option value="" disabled>Select a subject</option>
+        <option value="Math" th:selected="${quiz.subject=='Math'}">Math</option>
+        <option value="Science" th:selected="${quiz.subject=='Science'}">Science</option>
+        <option value="History" th:selected="${quiz.subject=='History'}">History</option>
+        <option value="Literature" th:selected="${quiz.subject=='Literature'}">Literature</option>
+        <option value="Geography" th:selected="${quiz.subject=='Geography'}">Geography</option>
       </select>
 
       <label for="topic">Topic:</label>
-      <input type="text" id="topic" name="topic" placeholder="Enter the topic for the quiz" required>
+      <input type="text" id="topic" name="topic" th:value="${quiz.topic}" placeholder="Enter the topic" required>
 
       <div class="checkbox-div">
         <label>Types of Questions:</label>
         <p>Select one or more types of questions</p>
         <div class="checkbox-group">
-          <label><input type="checkbox" name="questionTypes" value="Multiple Choice"> Multiple Choice</label>
-          <label><input type="checkbox" name="questionTypes" value="Fixed Choice"> Fixed Choice</label>
-          <label><input type="checkbox" name="questionTypes" value="Short Answer"> Short Answer</label>
+          <label>
+            <input
+                    type="checkbox"
+                    name="questionTypes"
+                    value="Multiple Choice"
+                    th:checked="${quiz.questionTypes.contains('Multiple Choice')}"
+            >
+            Multiple Choice
+          </label>
+          <label>
+            <input
+                    type="checkbox"
+                    name="questionTypes"
+                    value="Fixed Choice"
+                    th:checked="${quiz.questionTypes.contains('Fixed Choice')}"
+            >
+            Fixed Choice
+          </label>
+          <label>
+            <input
+                    type="checkbox"
+                    name="questionTypes"
+                    value="Short Answer"
+                    th:checked="${quiz.questionTypes.contains('Short Answer')}"
+            >
+            Short Answer
+          </label>
         </div>
       </div>
 
       <div class="group-number-pdf">
         <div>
           <label for="numQuestions">Number of Questions:</label>
-          <input type="number" id="numQuestions" name="numQuestions" min="1" required>
+          <input
+                  type="number"
+                  id="numQuestions"
+                  name="numQuestions"
+                  min="1"
+                  th:value="${quiz.numQuestions}"
+                  required
+          >
         </div>
         <div>
-          <label for="pdfFile">Upload PDF (optional):</label>
+          <label for="pdfFile">Upload New PDF (optional):</label>
           <input type="file" id="pdfFile" name="pdfFile" accept=".pdf">
         </div>
       </div>
 
       <div class="group-quiz">
         <div>
-          <label for="quizTime">Quiz Time (in minutes):</label>
-          <input type="number" id="quizTime" name="quizTime" min="1" required>
+          <label for="quizTime">Quiz Time (minutes):</label>
+          <input
+                  type="number"
+                  id="quizTime"
+                  name="quizTime"
+                  min="1"
+                  th:value="${quiz.quizTime}"
+                  required
+          >
         </div>
-
         <div>
           <label for="difficulty">Difficulty:</label>
           <select id="difficulty" name="difficulty" required>
-            <option value="" disabled selected>Select difficulty level</option>
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
+            <option value="Easy" th:selected="${quiz.difficulty=='Easy'}">Easy</option>
+            <option value="Medium" th:selected="${quiz.difficulty=='Medium'}">Medium</option>
+            <option value="Hard" th:selected="${quiz.difficulty=='Hard'}">Hard</option>
           </select>
         </div>
       </div>
 
-      <button type="submit">Generate Quiz</button>
+      <button type="submit">Save Quiz</button>
     </form>
   </div>
 </main>
@@ -276,36 +298,6 @@
   </div>
 </footer>
 
-<script>
-  document.getElementById('quizGenerationForm').addEventListener('submit', function (event) {
-    event.preventDefault();
-
-    let questionTypes = document.querySelectorAll('input[name="questionTypes"]:checked');
-    if (questionTypes.length === 0) {
-      alert("Please select at least one question type.");
-      return;
-    }
-
-    let formData = new FormData(this);
-
-    fetch('/api/quizzes/generate', {
-      method: 'POST',
-      body: formData
-    })
-            .then(response => response.json())
-            .then(data => {
-              if (data) {
-                window.location.href = "/quiz-management";
-              } else {
-                alert("Quiz generation failed. Please try again.");
-              }
-            })
-            .catch(error => {
-              console.error('Error:', error);
-              alert("An error occurred. Please try again.");
-            });
-  });
-</script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

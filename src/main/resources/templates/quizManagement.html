@@ -1,5 +1,5 @@
 <div th:replace="~{layout :: html(~{::title}, ~{::main}, ~{}, ~{})}">
-  <title>Statistics</title>
+  <title>QuizLab AI - Quiz Management</title>
   <main>
     <div class="container text-center mt-4">
       <a href="/quizgeneration" class="btn btn-primary">Create Quiz</a>
@@ -7,18 +7,37 @@
 
     <div class="row align-items-center mt-4">
       <div th:each="quiz : ${quizzes}" class="col-12 col-md-4 col-lg-4 mt-3">
-        <a th:href="@{'/quiz-attempt/' + ${quiz.id}}" class="text-decoration-none text-dark">
-          <div class="card h-100 shadow-sm">
-            <div class="card-body">
-              <div class="d-flex flex-column align-items-center">
-                <img th:src="@{/images/quiz_img.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow mb-3">
-                <h4 th:text="${quiz.subject}">Quiz Subject</h4>
-                <p th:text="${quiz.topic}">Topic</p>
-                <p th:text="'Questions: ' + ${quiz.numQuestions}">Number of Questions</p>
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <div class="d-flex flex-column align-items-center">
+              <img th:src="@{/images/quiz_img.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow mb-3">
+              <h4 th:text="${quiz.subject}">Quiz Subject</h4>
+              <p th:text="${quiz.topic}">Topic</p>
+              <p th:text="'Questions: ' + ${quiz.numQuestions}">Number of Questions</p>
+
+              <div class="d-flex gap-2 mt-2">
+                <a th:href="@{'/quiz-attempt/' + ${quiz.id}}"
+                   class="btn btn btn-primary flex-fill text-center">
+                  Attempt
+                </a>
+                <a th:href="@{'/edit-quiz/' + ${quiz.id}}"
+                   class="btn btn btn-warning flex-fill text-center">
+                  Edit
+                </a>
+                <form th:action="@{'/delete-quiz/' + ${quiz.id}}"
+                      method="post"
+                      onsubmit="return confirm('Are you sure?');"
+                      class="flex-fill m-0">
+                  <button type="submit"
+                          class="btn btn btn-danger w-100 text-center">
+                    Delete
+                  </button>
+                </form>
               </div>
+
             </div>
           </div>
-        </a>
+        </div>
       </div>
     </div>
   </main>

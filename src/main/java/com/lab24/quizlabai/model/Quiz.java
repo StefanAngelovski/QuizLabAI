@@ -16,7 +16,7 @@ public class Quiz {
     private int quizTime;
     private String difficulty;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> questionTypes;
 
     @Lob
