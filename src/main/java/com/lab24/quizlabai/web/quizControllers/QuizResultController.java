@@ -1,7 +1,10 @@
 package com.lab24.quizlabai.web.quizControllers;
 
 import com.lab24.quizlabai.model.Quiz;
+import com.lab24.quizlabai.model.QuizStatistics;
 import com.lab24.quizlabai.service.QuizService;
+import com.lab24.quizlabai.service.QuizStatisticsService;
+import com.lab24.quizlabai.service.impl.QuizStatisticsServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +22,9 @@ public class QuizResultController {
 
     @Autowired
     private QuizService quizService;
+
+    @Autowired
+    private QuizStatisticsService quizStatisticsService;
 
     @GetMapping("/{quizId}")
     public String showResult(@PathVariable Long quizId, HttpSession session, Model model) {
@@ -42,5 +48,14 @@ public class QuizResultController {
 
         return "quizResultPage";
     }
-}
+
+    @GetMapping("/{quizId}/statistics")
+        public String showQuizStatistics(@PathVariable Long quizId, Model model) {
+            QuizStatistics quizStatistics = quizStatisticsService.calculateStatistics(quizId);
+
+            model.addAttribute("quizStatistics", quizStatistics);
+
+            return "quizStatistics";
+        }
+    }
 
