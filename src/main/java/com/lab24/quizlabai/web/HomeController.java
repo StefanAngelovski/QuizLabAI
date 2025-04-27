@@ -45,7 +45,9 @@ public class HomeController {
     public String showQuizManagement(Model model, @AuthenticationPrincipal User user) {
         Role role = user.getRole();
         List<Quiz> quizzes = quizService.getAllQuizzes();
+        List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(role);
 
+        model.addAttribute("sidebarItems", sidebarItems);
         model.addAttribute("username", user.getUsername());
         model.addAttribute("quizzes", quizzes);
         return "quizManagement";
