@@ -167,7 +167,9 @@
     .group-quiz button:hover {
       background-color: #0056b3;
     }
-
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -206,6 +208,25 @@
     </div>
   </div>
 </nav>
+<div id="loader" style="
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+">
+  <div class="spinner" style="
+    width: 60px;
+    height: 60px;
+    border: 6px solid #ccc;
+    border-top-color: #ff0000;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  "></div>
+</div>
 
 <main>
   <div class="container-generation">
@@ -288,6 +309,8 @@
 
     let formData = new FormData(this);
 
+    document.getElementById('loader').style.display = 'flex';
+
     fetch('/api/quizzes/generate', {
       method: 'POST',
       body: formData
@@ -303,9 +326,13 @@
             .catch(error => {
               console.error('Error:', error);
               alert("An error occurred. Please try again.");
+            })
+            .finally(() => {
+              document.getElementById('loader').style.display = 'none';
             });
   });
 </script>
+
 
 </body>
 </html>
