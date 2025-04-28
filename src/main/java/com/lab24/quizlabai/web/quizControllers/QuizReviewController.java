@@ -38,14 +38,22 @@ public class QuizReviewController {
             int points = question.getPoints();
             List<String> answers = userAnswers.getOrDefault(question.getId(), new ArrayList<>());
 
-            if ("multiple-choice".equals(question.getType())) {
+            if ("Multiple Choice".equals(question.getType())) {
                 List<String> correctAnswers = Arrays.asList(question.getCorrectAnswer().split("\\s*,\\s*"));
                 int correctCount = (int) answers.stream().filter(correctAnswers::contains).count();
                 boolean exactMatch = correctCount == correctAnswers.size() && correctCount == answers.size();
                 questionScoreMap.put(question.getId(), exactMatch ? points : 0);
-            } else if ("short-answer".equals(question.getType()) && !answers.isEmpty()) {
+            } else if ("Short Answer".equals(question.getType()) && !answers.isEmpty()) {
                 questionScoreMap.put(question.getId(),
                         answers.get(0).equalsIgnoreCase(question.getCorrectAnswer()) ? points : 0);
+            } else if ("Fixed Choice".equals(question.getType())) {
+                if (!answers.isEmpty()) {
+                    String selectedAnswer = answers.get(0);
+                    questionScoreMap.put(question.getId(),
+                            selectedAnswer.equalsIgnoreCase(question.getCorrectAnswer()) ? points : 0);
+                } else {
+                    questionScoreMap.put(question.getId(), 0);
+                }
             } else {
                 questionScoreMap.put(question.getId(), 0);
             }
@@ -60,4 +68,5 @@ public class QuizReviewController {
         return "quizReviewPage";
     }
 }
+
 

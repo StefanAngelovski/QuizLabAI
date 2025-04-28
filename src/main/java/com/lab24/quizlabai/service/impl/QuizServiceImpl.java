@@ -44,7 +44,7 @@ public class QuizServiceImpl implements QuizService {
         quiz.setQuizTime(requestDto.getQuizTime());
         quiz.setDifficulty(requestDto.getDifficulty());
         quiz.setQuestionTypes(requestDto.getQuestionTypes());
-
+        quiz.setLanguage(requestDto.getLanguage());
         if (file != null && !file.isEmpty()) {
             quiz.setPdfFile(file.getBytes());
         }
@@ -65,7 +65,7 @@ public class QuizServiceImpl implements QuizService {
         responseDto.setQuizTime(savedQuiz.getQuizTime());
         responseDto.setDifficulty(savedQuiz.getDifficulty());
         responseDto.setQuestions(savedQuiz.getQuestions());
-
+        responseDto.setLanguage(savedQuiz.getLanguage());
         return responseDto;
     }
 
@@ -103,7 +103,7 @@ public class QuizServiceImpl implements QuizService {
         existing.setQuizTime(requestDto.getQuizTime());
         existing.setDifficulty(requestDto.getDifficulty());
         existing.setQuestionTypes(requestDto.getQuestionTypes());
-
+        existing.setLanguage(requestDto.getLanguage());
         if (file != null && !file.isEmpty()) {
             existing.setPdfFile(file.getBytes());
         }
@@ -116,6 +116,7 @@ public class QuizServiceImpl implements QuizService {
         dto.setQuizTime(saved.getQuizTime());
         dto.setDifficulty(saved.getDifficulty());
         dto.setQuestions(saved.getQuestions());
+        dto.setLanguage(saved.getLanguage());
         return dto;
     }
 

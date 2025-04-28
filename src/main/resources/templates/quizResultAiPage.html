@@ -14,7 +14,6 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
             background-color: #f5f5f5;
             display: flex;
             flex-direction: column;
@@ -32,8 +31,6 @@
         }
 
         .logo {
-            display: flex;
-            align-items: center;
             font-size: 24px;
             font-weight: bold;
         }
@@ -52,7 +49,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 30px auto;
             padding: 0 15px;
         }
@@ -90,22 +87,26 @@
         }
 
         .nav-btn {
-            background-color: #d3d3d3;
+            background-color: #6c757d;
             border: none;
             padding: 10px 20px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            color: #333;
+            color: #fff;
+            text-decoration: none;
         }
 
         footer {
             margin-top: auto;
             width: 100%;
+            background-color: #000;
+            color: #fff;
+            padding: 20px 0;
         }
 
         .results-table th, .results-table td {
-            padding: 8px;
+            padding: 10px;
             text-align: left;
             border: 1px solid #ddd;
         }
@@ -117,62 +118,75 @@
         .incorrect {
             background-color: #f8d7da;
         }
+
+        .no-answer {
+            color: #ff9800;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
+
 <div class="header">
-    <div class="logo">
-        <div class="logo-icon">🎓</div>
-        <div class="logo-text">Quiz<span>LabAI</span></div>
-    </div>
-
-    <div class="page-title">
-        Results for <span th:text="${Subject != null} ? ${Subject} : 'Quiz'">Quiz</span>
-    </div>
-
+    <div class="logo">QuizLabAI</div>
     <div class="user-profile">
-        <div class="user-icon">👤</div>
-        <div th:text="${userName != null} ? ${userName} : 'User'">Tarun ▼</div>
+        <span>User</span>
+        <img src="https://via.placeholder.com/30" alt="Profile" class="rounded-circle">
     </div>
 </div>
 
 <div class="container">
-    <h5 class="results-title">Results Summary</h5>
+    <h5 class="results-title">AI Evaluation Results</h5>
 
     <div class="results-card">
         <div class="results-info">
-            <p>Date: <span th:text="${#dates.format(#dates.createNow(), 'dd.MM.yyyy')}">27.03.2025</span></p>
-            <p>Quiz Time: <span th:text="${quizTime != null} ? ${quizTime} : '30:00'">30:00</span></p>
-            <p>Time taken: <span th:text="${timeTaken != null} ? ${timeTaken} : '18:00'">18:00</span></p>
+            <p>Date: <span th:text="${#dates.format(#dates.createNow(), 'dd.MM.yyyy')}"></span></p>
+            <p>Quiz Time: <span th:text="${quizTime}">30:00</span></p>
+            <p>Time Taken: <span th:text="${timeTaken}">18:00</span></p>
             <p>Answered Questions: <span th:text="${answeredQuestions}">0</span>/<span th:text="${totalQuestions}">0</span></p>
         </div>
 
         <div class="results-message">
-            <span th:if="${percentage >= 90}">
-                🎉 Excellent! You scored <b th:text="${percentage + '%'}">90%</b> with A grade.
-            </span>
-            <span th:if="${percentage >= 75 and percentage < 90}">
-                👏 Great job! You scored <b th:text="${percentage + '%'}">78%</b> with B grade.
-            </span>
-            <span th:if="${percentage >= 60 and percentage < 75}">
-                😊 Good work! You scored <b th:text="${percentage + '%'}">65%</b> with C grade.
-            </span>
-            <span th:if="${percentage < 60}">
-                😓 You scored <b th:text="${percentage + '%'}">45%</b>. Better luck next time!
-            </span>
+            <p th:text="'Score: ' + ${score} + ' points'"></p>
         </div>
     </div>
 
+    <h5>Evaluation Details:</h5>
+    <table class="table table-bordered results-table">
+        <thead>
+        <tr>
+            <th>Question</th>
+            <th>Your Answer</th>
+            <th>Correct Answer</th>
+            <th>Evaluation</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${evaluationResult == null or #lists.isEmpty(evaluationResult)}">
+            <td colspan="4" class="text-center">No evaluation results available</td>
+        </tr>
+        <tr th:each="eval : ${evaluationResult}"
+            th:class="${eval.correct ? 'correct' : 'incorrect'}">
+            <td th:text="${eval.questionText}">Question</td>
+            <td th:text="${eval.userAnswer != null ? eval.userAnswer : 'No Answer'}"
+                th:class="${eval.userAnswer == null or eval.userAnswer.isEmpty() ? 'no-answer' : ''}">
+            </td>
+            <td th:text="${eval.correctAnswer}">Correct Answer</td>
+            <td th:text="${eval.explanation}">Feedback</td>
+        </tr>
+        </tbody>
+    </table>
+
     <div class="navigation">
-        <a th:href="@{/attempt/review/{quizId}(quizId=${quizId})}" class="nav-btn btn btn-secondary">Review the Quiz</a>
-        <a href="/" class="nav-btn btn btn-secondary">Back to Dashboard</a>
+        <a href="/" class="nav-btn">Back to Dashboard</a>
     </div>
 </div>
 
-<footer class="bg-black py-4 text-white">
+<footer>
     <div class="text-center">
         <p class="mb-0">© 2025 QuizLab AI. All rights reserved.</p>
     </div>
 </footer>
+
 </body>
 </html>

@@ -27,13 +27,17 @@ public class QuizRestController {
     @PostMapping("/generate")
     public ResponseEntity<QuizResponseDto> generateQuiz(@ModelAttribute QuizRequestDto requestDto,
                                                         @RequestParam(value = "pdfFile", required = false) MultipartFile file) throws IOException {
+
         QuizResponseDto quizResponse = quizService.generateQuiz(requestDto, file);
+
+
         if (quizResponse != null) {
             return ResponseEntity.ok(quizResponse);
         } else {
             return ResponseEntity.badRequest().body(null);
         }
     }
+
 
     @GetMapping
     public ResponseEntity<List<Quiz>> getAllQuizzes() {

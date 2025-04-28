@@ -16,17 +16,12 @@
             height: 100%;
             margin: 0;
         }
-
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
             background-color: #f5f5f5;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
-
         .header {
             display: flex;
             justify-content: space-between;
@@ -36,65 +31,54 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             border-bottom: 1px solid #e0e0e0;
         }
-
         .logo {
             display: flex;
             align-items: center;
             font-size: 24px;
             font-weight: bold;
         }
-
         .logo-icon {
             font-size: 24px;
             margin-right: 5px;
         }
-
         .logo-text span {
             color: #ff0000;
         }
-
         .page-title {
             font-size: 24px;
             font-weight: bold;
             color: #666;
         }
-
         .user-profile {
             display: flex;
             align-items: center;
             gap: 10px;
             color: #ff0000;
         }
-
         .user-icon {
             font-size: 28px;
         }
-
         .container {
             max-width: 800px;
             margin: 30px auto;
             padding: 0 15px;
             flex: 1;
         }
-
         .timer {
             text-align: right;
             margin-bottom: 20px;
             color: #666;
         }
-
         .quiz-name {
             margin-bottom: 20px;
             font-weight: normal;
             color: #333;
         }
-
         .progress {
             text-align: right;
             color: #666;
             margin-bottom: 20px;
         }
-
         .question-card {
             background-color: white;
             border: 1px solid #e0e0e0;
@@ -102,45 +86,37 @@
             margin-bottom: 20px;
             overflow: hidden;
         }
-
         .question-header {
             padding: 15px;
             border-bottom: 1px solid #f0f0f0;
         }
-
         .question-title {
             font-weight: bold;
             margin-bottom: 5px;
         }
-
         .question-type {
             color: #666;
             font-size: 14px;
             margin-bottom: 10px;
         }
-
         .question-body {
             padding: 15px;
         }
-
         .options-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             margin-top: 10px;
         }
-
         .option-item {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-
-        .option-item input[type="checkbox"] {
+        .option-item input {
             width: 18px;
             height: 18px;
         }
-
         .points {
             background-color: #e0e0e0;
             display: inline-block;
@@ -148,12 +124,10 @@
             font-weight: bold;
             margin-top: 15px;
         }
-
         .navigation {
             text-align: right;
             margin-top: 20px;
         }
-
         .next-btn {
             background-color: #d3d3d3;
             border: none;
@@ -163,21 +137,10 @@
             font-weight: bold;
             color: #333;
         }
-
-        .red-circle {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 300px;
-            height: 300px;
-            border: 2px solid #ff0000;
-            border-radius: 50%;
-            margin-left: -100px;
-            z-index: -1;
-        }
     </style>
 </head>
 <body>
+
 <div class="header">
     <div class="logo">
         <div class="logo-icon">🎓</div>
@@ -188,16 +151,17 @@
     </div>
     <div class="user-profile">
         <div class="user-icon">👤</div>
-        <div th:text="${username}">Tarun ▼</div>
+        <div th:text="${username}">Username</div>
     </div>
 </div>
 
 <div class="container">
-    <div class="timer">Remaining Time : <span id="time"></span></div>
+    <div class="timer">Remaining Time: <span id="time"></span></div>
 
-    <h5 class="quiz-name" th:text="${quiz.subject}">Algorithms and data structures Quiz 1</h5>
+    <h5 class="quiz-name" th:text="${quiz.subject}">Quiz Subject</h5>
+
     <div class="progress">
-        <span th:text="${questionNumber}"></span>/<span th:text="${totalQuestions}"></span>
+        <span th:text="${questionNumber}">1</span>/<span th:text="${totalQuestions}">10</span>
     </div>
 
     <div class="question-card">
@@ -205,19 +169,22 @@
             <div class="question-title">
                 <span th:text="'Question ' + ${questionNumber} + ': ' + ${question.text}"></span>
             </div>
-            <div class="question-type" th:text="${question.type}">Select one or more</div>
+            <div class="question-type" th:text="${question.type}">Question Type</div>
             <div>Answers:</div>
         </div>
 
         <div class="question-body">
-            <!-- Form for Next Question -->
             <form method="post" th:action="@{/attempt/next}" th:if="${!isLastQuestion}">
                 <input type="hidden" name="questionId" th:value="${question.id}"/>
 
-                <!-- Options -->
-                <div class="options-grid" th:if="${question.type != 'short-answer'}">
+                <div class="options-grid" th:if="${question.type != 'Short Answer'}">
                     <div class="option-item" th:each="option, iterStat : ${question.options}">
-                        <input type="checkbox"
+                        <input th:if="${question.type == 'Fixed Choice'}" type="radio"
+                               th:id="'option' + ${iterStat.index}"
+                               name="selectedOptions"
+                               th:value="${option}"
+                               th:checked="${userAnswers != null && userAnswers[question.id] != null && userAnswers[question.id].contains(option)}">
+                        <input th:if="${question.type != 'Fixed Choice'}" type="checkbox"
                                th:id="'option' + ${iterStat.index}"
                                name="selectedOptions"
                                th:value="${option}"
@@ -226,9 +193,9 @@
                     </div>
                 </div>
 
-                <!-- Short Answer -->
-                <div th:if="${question.type == 'short-answer'}">
-                    <textarea name="shortAnswer" rows="4" cols="50" placeholder="Write your answer here..." th:text="${userAnswers != null && userAnswers[question.id] != null ? userAnswers[question.id] : ''}"></textarea>
+                <div th:if="${question.type == 'Short Answer'}">
+                    <textarea name="shortAnswer" rows="4" cols="50" placeholder="Write your answer here..."
+                              th:text="${userAnswers != null && userAnswers[question.id] != null ? userAnswers[question.id] : ''}"></textarea>
                 </div>
 
                 <div class="points">
@@ -240,25 +207,28 @@
                 </div>
             </form>
 
-            <!-- Form for Submit Quiz -->
-            <form method="post" th:action="@{/attempt/result/{quizId}(quizId=${quiz.id})}" th:if="${isLastQuestion}">
+            <form id="quizSubmitForm" method="post" th:action="@{/attempt/nextToSubmit}" th:if="${isLastQuestion}">
                 <input type="hidden" name="questionId" th:value="${question.id}"/>
 
-                <!-- Options -->
-                <div class="options-grid" th:if="${question.type != 'short-answer'}">
+                <div class="options-grid" th:if="${question.type != 'Short Answer'}">
                     <div class="option-item" th:each="option, iterStat : ${question.options}">
-                        <input type="checkbox"
-                               th:id="'optionFinal' + ${iterStat.index}"
+                        <input th:if="${question.type == 'Fixed Choice'}" type="radio"
+                               th:id="'optionLast' + ${iterStat.index}"
                                name="selectedOptions"
                                th:value="${option}"
                                th:checked="${userAnswers != null && userAnswers[question.id] != null && userAnswers[question.id].contains(option)}">
-                        <label th:for="'optionFinal' + ${iterStat.index}" th:text="${option}">Option</label>
+                        <input th:if="${question.type != 'Fixed Choice'}" type="checkbox"
+                               th:id="'optionLast' + ${iterStat.index}"
+                               name="selectedOptions"
+                               th:value="${option}"
+                               th:checked="${userAnswers != null && userAnswers[question.id] != null && userAnswers[question.id].contains(option)}">
+                        <label th:for="'optionLast' + ${iterStat.index}" th:text="${option}">Option</label>
                     </div>
                 </div>
 
-                <!-- Short Answer -->
-                <div th:if="${question.type == 'short-answer'}">
-                    <textarea name="shortAnswer" rows="4" cols="50" placeholder="Write your answer here..." th:text="${userAnswers != null && userAnswers[question.id] != null ? userAnswers[question.id] : ''}"></textarea>
+                <div th:if="${question.type == 'Short Answer'}">
+                    <textarea name="shortAnswer" rows="4" cols="50" placeholder="Write your answer here..."
+                              th:text="${userAnswers != null && userAnswers[question.id] != null ? userAnswers[question.id] : ''}"></textarea>
                 </div>
 
                 <div class="points">
@@ -266,29 +236,31 @@
                 </div>
 
                 <div class="navigation">
-                    <button type="submit" class="next-btn btn btn-danger">Submit Quiz</button>
+                    <button type="submit" class="next-btn btn btn-secondary" formaction="/attempt/nextToSubmit">Next to Submit Quiz</button>
                 </div>
             </form>
+
         </div>
     </div>
 </div>
 
-<div class="red-circle"></div>
+<script th:inline="javascript">
+    let quizId = [[${quiz.id}]];
+    let quizTimeInMinutes = [[${quizTime}]];
+    let storedQuizId = localStorage.getItem('quizId');
 
-<footer class="bg-black py-4 text-white">
-    <div class="text-center">
-        <p class="mb-0">© 2025 QuizLab AI. All rights reserved.</p>
-    </div>
-</footer>
+    if (storedQuizId !== quizId.toString()) {
+        localStorage.setItem('quizId', quizId);
+        localStorage.setItem('timeInSeconds', quizTimeInMinutes * 60);
+    }
 
-<script>
-    let timeInSeconds = localStorage.getItem('timeInSeconds') ? parseInt(localStorage.getItem('timeInSeconds')) : 15 * 60;
+    let timeInSeconds = parseInt(localStorage.getItem('timeInSeconds'));
     const timerElement = document.getElementById('time');
 
     function updateTimer() {
         const minutes = Math.floor(timeInSeconds / 60);
         const seconds = timeInSeconds % 60;
-        timerElement.textContent = minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+        timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
         if (timeInSeconds > 0) {
             timeInSeconds--;
@@ -296,6 +268,9 @@
             setTimeout(updateTimer, 1000);
         } else {
             alert('Time is up!');
+            localStorage.removeItem('timeInSeconds');
+            localStorage.removeItem('quizId');
+            document.getElementById('quizSubmitForm').submit();
         }
     }
 
