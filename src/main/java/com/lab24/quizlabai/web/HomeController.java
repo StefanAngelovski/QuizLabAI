@@ -14,10 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +40,10 @@ public class HomeController {
     @GetMapping({"/quiz-management"})
     public String showQuizManagement(Model model, @AuthenticationPrincipal User user) {
         Role role = user.getRole();
+
+        if (role != Role.ROLE_PROFESSOR) {
+            return "redirect:/access-denied";
+        }
         List<Quiz> quizzes = quizService.getAllQuizzes();
         List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(role);
 
@@ -75,6 +75,9 @@ public class HomeController {
     @GetMapping({"/quizgeneration"})
     public String showQuizGeneratorPage(Model model, @AuthenticationPrincipal User user) {
         Role role = user.getRole();
+        if (role != Role.ROLE_PROFESSOR) {
+            return "redirect:/access-denied";
+        }
         List<String> questionTypes = Arrays.asList("Multiple Choice", "Fixed Choice", "Short Answer");
 
         model.addAttribute("questionTypes", questionTypes);
@@ -83,7 +86,10 @@ public class HomeController {
     }
 
     @GetMapping("/edit-quiz/{id}")
-    public String editQuiz(@PathVariable("id") Long id, Model model) {
+    public String editQuiz(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal User user) {
+        if (user.getRole() != Role.ROLE_PROFESSOR) {
+            return "redirect:/access-denied";
+        }
         Optional<Quiz> quizOptional = Optional.ofNullable(quizService.getQuizById(id));
         if (quizOptional.isPresent()) {
             Quiz quiz = quizOptional.get();
@@ -101,20 +107,39 @@ public class HomeController {
     public String saveEditedQuiz(
             @PathVariable("id") Long id,
             @ModelAttribute QuizRequestDto requestDto,
-            @RequestParam(value = "pdfFile", required = false) MultipartFile file
+            @RequestParam(value = "pdfFile", required = false) MultipartFile file,
+            @AuthenticationPrincipal User user
     ) {
+        if (user.getRole() != Role.ROLE_PROFESSOR) {
+            return "redirect:/access-denied";
+        }
         try {
             quizService.updateQuiz(id, requestDto, file);
             return "redirect:/quiz-management";
         } catch (IOException e) {
             e.printStackTrace();
-            return "error";
+            return "common/error";
         }
     }
 
     @PostMapping("/delete-quiz/{id}")
-    public String deleteQuiz(@PathVariable("id") Long id) {
+    public String deleteQuiz(@PathVariable("id") Long id,  @AuthenticationPrincipal User user) {
+        if (user.getRole() != Role.ROLE_PROFESSOR) {
+            return "redirect:/access-denied";
+        }
         quizService.deleteQuiz(id);
         return "redirect:/quiz-management";
+    }
+
+    @GetMapping("/access-denied")
+    public String accessDenied(Model model, @AuthenticationPrincipal User user) {
+        Role role = user.getRole();
+        List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(role);
+
+        model.addAttribute("sidebarItems", sidebarItems);
+        model.addAttribute("username", user.getUsername());
+        model.addAttribute("errorMessage", "You do not have permission to perform this action.");
+
+        return "common/error";
     }
 }
