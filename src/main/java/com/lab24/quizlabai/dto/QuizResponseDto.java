@@ -13,6 +13,15 @@ public class QuizResponseDto {
     private int quizTime;
     private String difficulty;
     private List<Question> questions;
+    private String language;
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 
     public String getSubject() {
         return subject;

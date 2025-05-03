@@ -150,15 +150,14 @@
         }
     </style>
 </head>
+
 <body>
 <div class="header">
     <div class="logo">
         <div class="logo-icon">🎓</div>
         <div class="logo-text">Quiz<span>LabAI</span></div>
     </div>
-
     <div class="page-title">Quiz Review</div>
-
     <div class="user-profile">
         <div class="user-icon">👤</div>
         <div>Tarun ▼</div>
@@ -175,24 +174,36 @@
         </div>
 
         <div class="question-body">
-            <div class="options-grid" th:if="${question.type == 'multiple-choice'}">
+            <!-- MULTIPLE CHOICE QUESTIONS -->
+            <div class="options-grid" th:if="${question.type == 'Multiple Choice'}">
                 <div th:each="option : ${question.options}"
                      class="option-item"
                      th:class="${(question.correctAnswer.contains(option) ? 'option-correct' : '') +
                      (userAnswers[question.id] != null and userAnswers[question.id].contains(option) ? ' user-selected' : '')}">
                     <label th:text="${option}">Option</label>
                 </div>
-
             </div>
 
-            <div th:if="${question.type == 'short-answer'}">
+            <!-- FIXED CHOICE QUESTIONS -->
+            <div class="options-grid" th:if="${question.type == 'Fixed Choice'}">
+                <div th:each="option : ${question.options}"
+                     class="option-item"
+                     th:class="${(question.correctAnswer == option ? 'option-correct' : '') +
+                     (userAnswers[question.id] != null and userAnswers[question.id][0] == option ? ' user-selected' : '')}">
+                    <label th:text="${option}">Option</label>
+                </div>
+            </div>
+
+
+            <div th:if="${question.type == 'Short Answer'}">
                 <p><strong>Your Answer:</strong>
-                    <span th:text="${userAnswers[question.id] != null ? userAnswers[question.id][0] : 'No Answer'}"></span>
+                    <span th:text="${userAnswers[question.id] != null and !userAnswers[question.id].isEmpty() ? userAnswers[question.id][0] : 'No Answer'}"></span>
                 </p>
                 <p><strong>Correct Answer:</strong>
                     <span th:text="${question.correctAnswer}"></span>
                 </p>
             </div>
+
 
             <div>
                 <p th:if="${questionScoreMap[question.id] > 0}" class="text-success fw-bold">✔</p>

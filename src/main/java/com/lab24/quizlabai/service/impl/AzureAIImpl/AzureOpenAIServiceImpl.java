@@ -18,7 +18,9 @@ import jakarta.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AzureOpenAIServiceImpl implements AzureOpenAIService {
@@ -48,6 +50,14 @@ public class AzureOpenAIServiceImpl implements AzureOpenAIService {
     @Override
     public List<Question> generateQuestions(Quiz quiz) {
         StringBuilder promptBuilder = new StringBuilder();
+
+
+        String language = quiz.getLanguage();
+        if (language != null && language.equals("Macedonian")) {
+            promptBuilder.append("Generate the quiz questions in Macedonian. ");
+        } else {
+            promptBuilder.append("Generate the quiz questions in English. ");
+        }
 
         promptBuilder.append(String.format(
                 "Generate %d %s-level quiz questions on the topic '%s' in the subject '%s'. ",
@@ -117,6 +127,42 @@ public class AzureOpenAIServiceImpl implements AzureOpenAIService {
             return new ArrayList<>();
         }
     }
+    @Override
+    public String evaluateAnswersWithAI(List<Question> questions, Map<Long, List<String>> userAnswers) {
+        StringBuilder prompt = new StringBuilder();
+        prompt.append("Evaluate the following answers. For each, strictly use this format:\n");
+        prompt.append("Question: [text]\n");
+        prompt.append("User's Answer: [user's answer]\n");
+        prompt.append("Correct Answer: [correct answer]\n");
+        prompt.append("Feedback: [feedback about the answer]\n\n");
+
+        for (Question question : questions) {
+            List<String> userAnswerList = userAnswers.getOrDefault(question.getId(), List.of());
+            String userAnswerStr = userAnswerList.isEmpty() ? "No answer" : String.join(", ", userAnswerList);
+
+            prompt.append("Question: ").append(question.getText()).append("\n");
+            prompt.append("User's Answer: ").append(userAnswerStr).append("\n");
+            prompt.append("Correct Answer: ").append(question.getCorrectAnswer()).append("\n");
+            prompt.append("Feedback: Provide detailed evaluation.\n\n");
+        }
+
+        List<ChatRequestMessage> messages = List.of(
+                new ChatRequestSystemMessage("You are a helpful AI that strictly follows response formatting."),
+                new ChatRequestUserMessage(prompt.toString())
+        );
+
+        ChatCompletionsOptions options = new ChatCompletionsOptions(messages)
+                .setMaxTokens(2000)
+                .setTemperature(0.5);
+
+        try {
+            ChatCompletions result = client.getChatCompletions(DEPLOYMENT_NAME, options);
+            return result.getChoices().get(0).getMessage().getContent();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
 
     private String extractPdfContent(byte[] pdfFile) {
         try (PDDocument document = PDDocument.load(new ByteArrayInputStream(pdfFile))) {
@@ -128,3 +174,4 @@ public class AzureOpenAIServiceImpl implements AzureOpenAIService {
         }
     }
 }
+

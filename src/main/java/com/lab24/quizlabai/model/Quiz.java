@@ -15,7 +15,7 @@ public class Quiz {
     private int numQuestions;
     private int quizTime;
     private String difficulty;
-
+    private String language;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> questionTypes;
 
@@ -24,6 +24,14 @@ public class Quiz {
 
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions;
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 
     public Long getId() {
         return id;

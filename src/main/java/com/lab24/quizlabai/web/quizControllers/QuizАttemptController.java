@@ -34,6 +34,10 @@ public class QuizАttemptController {
         session.setAttribute("quiz", quiz);
         session.setAttribute("totalPoints", questions.stream().mapToInt(Question::getPoints).sum());
         session.setAttribute("userAnswers", new HashMap<Long, List<String>>());
+        session.setAttribute("quizTime", quiz.getQuizTime());
+
+
+        session.setAttribute("startTime", System.currentTimeMillis());
 
         model.addAttribute("question", questions.get(0));
         model.addAttribute("quiz", quiz);

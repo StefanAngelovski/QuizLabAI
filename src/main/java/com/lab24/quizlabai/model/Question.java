@@ -15,7 +15,14 @@ public class Question {
     private String type;
     private String text;
     private int points;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quiz_id")
+    private Quiz quiz;
 
+    @ElementCollection
+    private List<String> options;
+
+    private String correctAnswer;
 
     public int getPoints() {
         return points;
@@ -72,13 +79,4 @@ public class Question {
     public void setCorrectAnswer(String correctAnswer) {
         this.correctAnswer = correctAnswer;
     }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "quiz_id")
-    private Quiz quiz;
-
-    @ElementCollection
-    private List<String> options;
-
-    private String correctAnswer;
 }
