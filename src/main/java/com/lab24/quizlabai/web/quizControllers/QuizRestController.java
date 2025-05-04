@@ -1,6 +1,5 @@
 package com.lab24.quizlabai.web.quizControllers;
 
-import ch.qos.logback.core.model.Model;
 import com.lab24.quizlabai.dto.QuizRequestDto;
 import com.lab24.quizlabai.dto.QuizResponseDto;
 import com.lab24.quizlabai.model.Quiz;
@@ -38,7 +37,6 @@ public class QuizRestController {
         }
     }
 
-
     @GetMapping
     public ResponseEntity<List<Quiz>> getAllQuizzes() {
         return ResponseEntity.ok(quizService.getAllQuizzes());
@@ -49,7 +47,5 @@ public class QuizRestController {
         Quiz quiz = quizService.getQuizById(quizId);
         return quiz != null ? ResponseEntity.ok(quiz) : ResponseEntity.notFound().build();
     }
-
-
 
 }

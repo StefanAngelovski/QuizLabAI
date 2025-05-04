@@ -1,44 +1,65 @@
-<div th:replace="~{layout :: html(~{::title}, ~{::main}, ~{}, ~{})}">
-  <title>QuizLab AI - Quiz Management</title>
-  <main>
-    <div class="container text-center mt-4">
-      <a href="/quizgeneration" class="btn btn-primary">Create Quiz</a>
-    </div>
-
-    <div class="row align-items-center mt-4">
-      <div th:each="quiz : ${quizzes}" class="col-12 col-md-4 col-lg-4 mt-3">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <div class="d-flex flex-column align-items-center">
-              <img th:src="@{/images/quiz_img.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow mb-3">
-              <h4 th:text="${quiz.subject}">Quiz Subject</h4>
-              <p th:text="${quiz.topic}">Topic</p>
-              <p th:text="'Questions: ' + ${quiz.numQuestions}">Number of Questions</p>
-
-              <div class="d-flex gap-2 mt-2">
-                <a th:href="@{'/quiz-attempt/' + ${quiz.id}}"
-                   class="btn btn btn-primary flex-fill text-center">
-                  Attempt
-                </a>
-                <a th:href="@{'/edit-quiz/' + ${quiz.id}}"
-                   class="btn btn btn-warning flex-fill text-center">
-                  Edit
-                </a>
-                <form th:action="@{'/delete-quiz/' + ${quiz.id}}"
-                      method="post"
-                      onsubmit="return confirm('Are you sure?');"
-                      class="flex-fill m-0">
-                  <button type="submit"
-                          class="btn btn btn-danger w-100 text-center">
-                    Delete
-                  </button>
-                </form>
-              </div>
-
-            </div>
-          </div>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizLabAI - Student Progress</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/2662512c9c.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/header.html}"></div>
+<div class="container">
+    <div th:replace="~{fragments/sidebar.html}"></div>
+    <div class="content">
+        <div class="breadcrumb">
+            <span>🎛️</span>
+            <a href="/dashboard">Dashboard </a> /
+            <a href="#" class="font"> Manage Quizzes</a>
         </div>
-      </div>
+        <main>
+            <div class="flex-box mt-4" style="display: flex; justify-content: flex-end;">
+                <a href="/quizgeneration" class="btn btn-primary">Create Quiz</a>
+            </div>
+            <div class="row align-items-center mt-4">
+                <div th:each="quiz : ${quizzes}" class="col-12 col-md-4 col-lg-4 mt-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex flex-column align-items-center">
+                                <i>📝</i>
+                                <h4 th:text="${quiz.subject}">Quiz Subject</h4>
+                                <p th:text="${quiz.topic}">Topic</p>
+                                <p th:text="'Questions: ' + ${quiz.numQuestions}">Number of Questions</p>
+
+                                <div class="d-flex gap-2 mt-2">
+                                    <a th:href="@{'/quiz-attempt/' + ${quiz.id}}"
+                                       class="btn btn btn-primary flex-fill text-center">
+                                        Attempt
+                                    </a>
+                                    <a th:href="@{'/edit-quiz/' + ${quiz.id}}"
+                                       class="btn btn btn-warning flex-fill text-center">
+                                        Edit
+                                    </a>
+                                    <form th:action="@{'/delete-quiz/' + ${quiz.id}}"
+                                          method="post"
+                                          onsubmit="return confirm('Are you sure?');"
+                                          class="flex-fill m-0">
+                                        <button type="submit"
+                                                class="btn btn btn-danger w-100 text-center">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
-  </main>
 </div>
+</body>
+</html>

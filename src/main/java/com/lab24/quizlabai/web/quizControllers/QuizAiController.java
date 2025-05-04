@@ -34,8 +34,8 @@ public class QuizAiController {
         Quiz quiz = (Quiz) session.getAttribute("quiz");
 
         if (userAnswers == null || questions == null || quiz == null) {
-            model.addAttribute("error", "Session data is missing.");
-            return "errorPage";
+            model.addAttribute("errorMessage", "Session data is missing.");
+            return "common/error";
         }
 
         String timeTaken = (String) session.getAttribute("timeTaken");
@@ -46,8 +46,8 @@ public class QuizAiController {
                 timeTaken = String.format("%d minutes %d seconds", duration / 60, duration % 60);
                 session.setAttribute("timeTaken", timeTaken);
             } else {
-                model.addAttribute("error", "Quiz start time is missing.");
-                return "errorPage";
+                model.addAttribute("errorMessage", "Quiz start time is missing.");
+                return "common/error";
             }
         }
 
