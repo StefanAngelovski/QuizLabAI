@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+    <title>Upcoming quizzes</title>
+    <style>
+        html, body {
+            height: 100%;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            background-color: #f4f4f9;
+        }
+        main{
+            display: flex;
+            flex: 1;
+            justify-content: center;
+        }
+        .upcoming-container{
+            width: 90%;
+            background-color: #f9f9fc;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+        .heading-with-lines {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .heading-with-lines::before,
+        .heading-with-lines::after {
+            content: "";
+            flex: 1;
+            border-bottom: 3px solid #007bff;
+            margin: 0 15px;
+        }
+        .header-upcoming p{
+            text-align: center;
+            font-size: 17px;
+            padding-bottom: 20px;
+        }
+        #calendar.calendar-small {
+            max-width: 300px;
+            height: 200px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        #calendar.calendar-large {
+            max-width: 100%;
+            height: 600px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        #toggleCalendarBtn {
+            padding: 6px 12px;
+            margin-bottom: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            justify-items: center;
+            align-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #saveQuizBtn{
+            padding: 10px 0 10px 0;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+        }
+        .upcomingQuizzes{
+            padding-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="upcoming-container">
+            <div class="header-upcoming">
+                <h1 class="heading-with-lines">
+                    <span>Upcoming quizzes</span>
+                </h1>
+                <p>Your scheduled quizzes are listed below. Don't forget to mark your calendar!</p>
+            </div>
+            <div class="calendar-wrapper">
+                <button id="toggleCalendarBtn">Expand Calendar</button>
+                <div class="calendar-small" id="calendar"></div>
+            </div>
+            <div id="quizModal" class="modal">
+                <div class="modal-content">
+                    <span class="close-btn" id="closeModalBtn">&times;</span>
+                    <p id="selectedDateDisplay"></p>
+                    <h2>Enter Quiz Title</h2>
+                    <input type="text" id="quizTitleInput" placeholder="Enter quiz title here" />
+                    <button id="saveQuizBtn">Save</button>
+                </div>
+            </div>
+
+            <div class="upcomingQuizzes">
+                <h2>Quizzes</h2>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        $(document).ready(function () {
+            let selectedDate = null;
+            $('#calendar').fullCalendar({
+                height: 600,
+                defaultView: 'month',
+                editable: true,
+                selectable: true,
+                selectHelper: true,
+                select: function (start, end) {
+                    const formattedDate = moment(start).format('YYYY-MM-DD');
+                    $('#selectedDateDisplay').text('Date: ' + formattedDate);
+
+                    $('#quizModal').show();
+
+                    $('#saveQuizBtn').off().on('click', function () {
+                        const title = $('#quizTitleInput').val();
+                        if (title) {
+                            const eventData = {
+                                title: title,
+                                start: start,
+                                end: end,
+                                allDay: true
+                            };
+                            $('#calendar').fullCalendar('renderEvent', eventData, true);
+                            $('#quizModal').hide();
+                            $('#quizTitleInput').val('');
+                        } else {
+                            alert('Please enter a title for your quiz!');
+                        }
+                    });
+                },
+                eventClick: function (event, jsEvent, view) {
+                    const action = confirm("Mark this quiz as done? (Cancel to delete)");
+                    if (action) {
+                        $(this).css({
+                            'background-color': '#d3d3d3',
+                            'text-decoration': 'line-through',
+                            'border-color': '#aaa'
+                        });
+                    } else {
+                        $('#calendar').fullCalendar('removeEvents', event._id);
+                    }
+                }
+            });
+
+            $('#closeModalBtn').on('click', function () {
+                $('#quizModal').hide();
+            });
+
+            let expanded = false;
+            $('#toggleCalendarBtn').on('click', function () {
+                expanded = !expanded;
+                $('#calendar')
+                    .toggleClass('calendar-small calendar-large');
+                $(this).text(expanded ? 'Minimize Calendar' : 'Expand Calendar');
+                $('#calendar').fullCalendar('render');
+            });
+        });
+    </script>
+</body>
+</html>

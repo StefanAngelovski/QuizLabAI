@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +8,221 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <script src="https://kit.fontawesome.com/2662512c9c.js" crossorigin="anonymous"></script>
   <link rel="stylesheet" th:href="@{/css/style.css}" />
+
+  <style>
+    main{
+      align-content: center;
+      align-items: center;
+      justify-content: center;
+      justify-items: center;
+    }
+    .container-dashboard {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .group1, .group2{
+      display: flex;
+      flex-direction: column;
+      gap:20px;
+      width: 300px;
+    }
+    .overview{
+      width: 290px;
+    }
+    .materials{
+      height: 170px;
+    }
+    .upcoming, .todo{
+      height: 260px;
+    }
+    .score{
+      height: 170px;
+    }
+    .overview, .materials, .upcoming, .todo, .score{
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .materials p, .upcoming p, .todo p, .score p{
+      font-size: 14px;
+    }
+    .overview h6, .materials h6, .upcoming h6, .todo h6, .score h6{
+      font-weight: 500;
+    }
+    .overview:hover, .materials:hover, .upcoming:hover, .todo:hover, .score:hover{
+      transform: scale(1.04);
+      transition: transform 0.3s ease;
+      cursor: pointer;
+    }
+    .score .display-6{
+      padding-top: 20px;
+    }
+    .score{
+      overflow: hidden;
+    }
+    .cut-circle {
+      position: absolute;
+      width: 230px;
+      height: 230px;
+      background-color: #ffe5e5;
+      border-radius: 50%;
+      top: -30px;
+      left: 30px;
+      z-index: 0;
+      opacity: 0.35;
+    }
+    .separator{
+      height: 2.5px;
+      width: 140px;
+      background-color: red;
+      margin-left: 60px;
+      margin-bottom: 20px;
+    }
+    .todo .display-6{
+      padding-top: 20px;
+    }
+    .upcoming a{
+      display: block;
+      text-align: right;
+      font-size: 0.9rem;
+      text-decoration: none;
+      margin-bottom: 17px;
+    }
+    .dot-separator{
+      text-align: center;
+      font-size: 24px;
+      color: blue;
+      letter-spacing: 10px;
+    }
+    .overviewContent p{
+      margin: 0;
+      display: block;
+      text-align: left;
+    }
+    .overview .display-6{
+      padding-top: 30px;
+    }
+    .overview h6{
+      padding-bottom: 40px;
+      font-size: 20px;
+    }
+    .quizzes{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 25px;
+      padding: 10px;
+      background: #f0f0f0;
+      border-radius: 8px;
+    }
+    .div1, .div2, .div3, .div4, .div5{
+      width: 65px;
+      height: 45px;
+      background: #4CAF50;
+      opacity: 0.4;
+      border-radius: 10px;
+    }
+    .div5{
+      background: #e74c3c;
+    }
+
+    /* Modal background */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5); /* Dark transparent background */
+    }
+
+    /* Modal content */
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px 30px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      position: relative;
+      animation: slideIn 0.3s ease;
+    }
+
+    /* Close button */
+    .close {
+      color: #aaa;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #000;
+    }
+
+    /* Input field */
+    #newTaskInput {
+      width: 100%;
+      padding: 10px;
+      margin-top: 15px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    /* Add button */
+    #addTaskBtn {
+      background-color: #3498db;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    #addTaskBtn:hover {
+      background-color: #2980b9;
+    }
+    #taskList {
+      list-style: none;
+      padding: 0;
+      margin-top: 15px;
+    }
+
+    #taskList li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    .modal .newTask{
+      padding-top: 10px;
+      border-radius: 10px;
+      background-color: #f0f0f0;
+      padding: 12px;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(-20%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0%);
+        opacity: 1;
+      }
+    }
+
+  </style>
 </head>
 <body>
 <div th:replace="~{fragments/header.html}"></div>
@@ -20,92 +235,252 @@
       <a href="#" class="font"> Dashboard</a>
     </div>
     <main>
-      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        <!-- Quizzes Overview -->
-        <div sec:authorize="hasAnyRole('Student', 'Admin')" class="col">
-          <div class="card h-100 text-center">
-            <div class="card-body">
-              <div class="display-6">📝</div>
-              <h6 class="card-title mt-3">Quizzes Overview</h6>
-            </div>
-          </div>
-        </div>
+<!--      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">-->
+      <div class="container-dashboard">
 
-        <!-- Studying Materials -->
-        <div class="col">
+      <div class="group1">
+        <div class="materials">
           <div class="card h-100 text-center">
             <div class="card-body">
               <div class="display-6">📚</div>
               <h6 class="card-title mt-3">Studying Materials</h6>
+              <p>Your learning resources in one place.</p>
             </div>
           </div>
         </div>
-
-        <!-- Completed Quizzes -->
-        <div class="col">
+        <div class="upcoming">
           <div class="card h-100 text-center">
             <div class="card-body">
-              <div class="display-6">✅</div>
-              <h6 class="card-title mt-3">Completed Quizzes</h6>
-            </div>
-          </div>
-        </div>
-
-        <!-- Average Score -->
-        <div class="col">
-          <div class="card h-100 text-center">
-            <div class="card-body">
-              <div class="display-6">🎯</div>
-              <h6 class="card-title mt-3">Average Score</h6>
-            </div>
-          </div>
-        </div>
-
-        <!-- Time Spent -->
-        <div class="col">
-          <div class="card h-100 text-center">
-            <div class="card-body">
-              <div class="display-6">⏱️</div>
-              <h6 class="card-title mt-3">Time Spent</h6>
-            </div>
-          </div>
-        </div>
-
-        <!-- Progress Tracker -->
-        <div class="col">
-          <div class="card h-100 text-center">
-            <div class="card-body">
-              <div class="display-6">📈</div>
-              <h6 class="card-title mt-3">Personal Progress Tracker</h6>
-            </div>
-          </div>
-        </div>
-
-        <!-- Passed Quizzes -->
-        <div class="col">
-          <div class="card h-100 text-center">
-            <div class="card-body">
-              <div class="display-6">🏆</div>
-              <h6 class="card-title mt-3">Passed Quizzes</h6>
-              <p class="fs-4 mb-0">5</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Failed Quizzes -->
-        <div class="col">
-          <div class="card h-100 text-center">
-            <div class="card-body">
-              <div class="display-6">❌</div>
-              <h6 class="card-title mt-3">Failed Quizzes</h6>
-              <p class="fs-4 mb-0">2</p>
+              <a>View All <i class="fas fa-arrow-right"></i></a>
+              <div class="display-6">🗓️</div>
+              <h6 class="card-title mt-3">Upcoming Quizzes</h6>
+              <div class="dot-separator">•  •  •  •</div>
+              <p>Don’t miss your next quiz.</p>
             </div>
           </div>
         </div>
       </div>
 
+        <div class="overview">
+          <div class="card h-100 text-center">
+            <div class="card-body">
+              <div class="display-6">📊</div>
+              <h6 class="card-title mt-3">Quizzes Overview</h6>
+              <div class="overviewContent">
+                <p>Take a look at your completed</p>
+                <p>✅ passed quizzes</p>
+                <p>❌ failed quizzes</p>
+              </div>
+              <div class="quizzes">
+                <div class="div1"></div>
+                <div class="div2"></div>
+                <div class="div3"></div>
+                <div class="div4"></div>
+                <div class="div5"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="group2">
+          <div class="todo">
+            <div class="card h-100 text-center">
+              <div class="card-body">
+                <div class="display-6">📝</div>
+                <h6 class="card-title mt-3">My To-Do List</h6>
+                <div class="separator"></div>
+                <p>Organize your study goals.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal -->
+          <div id="todoModal" class="modal">
+            <div class="modal-content">
+              <span class="close">&times;</span>
+              <div class="tasks">
+                <h5>Tasks</h5>
+                <ul id="taskList"></ul>
+              </div>
+              <div class="newTask">
+                <h5>Add Task</h5>
+                <input type="text" id="newTaskInput" placeholder="Enter a new task" />
+                <button id="addTaskBtn">Add</button>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="score">
+            <div class="card h-100 text-center">
+              <div class="card-body">
+                <div class="display-6">🎯</div>
+                <h6 class="card-title mt-3">Average Score</h6>
+                <div class="cut-circle"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+        <!-- Completed Quizzes -->
+        <!--        <div class="col">-->
+        <!--          <div class="card h-100 text-center">-->
+        <!--            <div class="card-body">-->
+        <!--              <div class="display-6">✅</div>-->
+        <!--              <h6 class="card-title mt-3">Completed Quizzes</h6>-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--        </div>-->
+
+        <!-- Time Spent -->
+<!--        <div class="col">-->
+<!--          <div class="card h-100 text-center">-->
+<!--            <div class="card-body">-->
+<!--              <div class="display-6">⏱️</div>-->
+<!--              <h6 class="card-title mt-3">Time Spent</h6>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+
+        <!-- Progress Tracker -->
+<!--        <div class="col">-->
+<!--          <div class="card h-100 text-center">-->
+<!--            <div class="card-body">-->
+<!--              <div class="display-6">📈</div>-->
+<!--              <h6 class="card-title mt-3">Personal Progress Tracker</h6>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+
+        <!-- Passed Quizzes -->
+<!--        <div class="col">-->
+<!--          <div class="card h-100 text-center">-->
+<!--            <div class="card-body">-->
+<!--              <div class="display-6">🏆</div>-->
+<!--              <h6 class="card-title mt-3">Passed Quizzes</h6>-->
+<!--              <p class="fs-4 mb-0">5</p>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+
+        <!-- Failed Quizzes -->
+<!--        <div class="col">-->
+<!--          <div class="card h-100 text-center">-->
+<!--            <div class="card-body">-->
+<!--              <div class="display-6">❌</div>-->
+<!--              <h6 class="card-title mt-3">Failed Quizzes</h6>-->
+<!--              <p class="fs-4 mb-0">2</p>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+
     </main>
   </div>
 </div>
+<script>
+  const modal = document.getElementById("todoModal");
+  const todoCard = document.querySelector(".todo .card");
+  const closeBtn = document.querySelector(".modal .close");
+  const addTaskBtn = document.getElementById("addTaskBtn");
+  const taskList = document.getElementById("taskList");
+  const newTaskInput = document.getElementById("newTaskInput");
+
+  // Load tasks from localStorage
+  window.onload = function () {
+    loadTasks();
+  };
+
+  todoCard.addEventListener("click", () => {
+    modal.style.display = "block";
+  });
+
+  closeBtn.addEventListener("click", () => {
+    modal.style.display = "none";
+  });
+
+  window.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
+  });
+
+  addTaskBtn.addEventListener("click", () => {
+    const taskText = newTaskInput.value.trim();
+    if (taskText !== "") {
+      const task = {
+        text: taskText,
+        checked: false,
+        timestamp: new Date().getTime(),
+      };
+      saveTask(task);
+      addTaskToDOM(task);
+      newTaskInput.value = "";
+    }
+  });
+
+  function addTaskToDOM(task) {
+    const li = document.createElement("li");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = task.checked;
+
+    const span = document.createElement("span");
+    span.textContent = task.text;
+    if (task.checked) {
+      span.style.color = "gray";
+      span.style.textDecoration = "line-through";
+    }
+
+    checkbox.addEventListener("change", () => {
+      task.checked = checkbox.checked;
+      if (checkbox.checked) {
+        span.style.color = "gray";
+        span.style.textDecoration = "line-through";
+      } else {
+        span.style.color = "";
+        span.style.textDecoration = "";
+      }
+      updateStoredTasks();
+    });
+
+    li.appendChild(checkbox);
+    li.appendChild(span);
+    taskList.appendChild(li);
+  }
+
+  function saveTask(task) {
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    tasks.push(task);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }
+
+  function loadTasks() {
+    let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    const now = new Date().getTime();
+    const freshTasks = tasks.filter(t => now - t.timestamp <= 24 * 60 * 60 * 1000);
+    taskList.innerHTML = "";
+    freshTasks.forEach(addTaskToDOM);
+    localStorage.setItem("tasks", JSON.stringify(freshTasks));
+  }
+
+  function updateStoredTasks() {
+    const items = taskList.querySelectorAll("li");
+    const updatedTasks = [];
+    items.forEach(li => {
+      const checkbox = li.querySelector("input");
+      const span = li.querySelector("span");
+      updatedTasks.push({
+        text: span.textContent,
+        checked: checkbox.checked,
+        timestamp: new Date().getTime()
+      });
+    });
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+  }
+</script>
+
+
 </body>
 </html>
