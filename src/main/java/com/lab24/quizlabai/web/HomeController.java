@@ -2,11 +2,12 @@ package com.lab24.quizlabai.web;
 
 
 import com.lab24.quizlabai.dto.QuizRequestDto;
-import com.lab24.quizlabai.model.Quiz;
-import com.lab24.quizlabai.model.Role;
-import com.lab24.quizlabai.model.User;
+import com.lab24.quizlabai.model.*;
 import com.lab24.quizlabai.model.enums.SidebarItem;
 import com.lab24.quizlabai.service.QuizService;
+
+import com.lab24.quizlabai.service.SubjectService;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,9 +23,11 @@ import java.util.Optional;
 @Controller
 public class HomeController {
     private final QuizService quizService;
+    private final SubjectService subjectService;
 
-    public HomeController(QuizService quizService) {
+    public HomeController(QuizService quizService, SubjectService subjectService) {
         this.quizService = quizService;
+        this.subjectService = subjectService;
     }
 
     @GetMapping({"/", "/home", "/index"})
@@ -53,6 +56,21 @@ public class HomeController {
         return "quizManagement";
     }
 
+
+    @GetMapping("/subject-management")
+    public String showSubjectManagementPage(Model model, @AuthenticationPrincipal User user) {
+        if (user.getRole() != Role.ROLE_PROFESSOR) {
+            return "redirect:/access-denied";
+        }
+
+        List<Subject> subjects = subjectService.findSubjectsCreatedBy(user.getUsername());
+        List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(user.getRole());
+
+        model.addAttribute("sidebarItems", sidebarItems);
+        model.addAttribute("username", user.getUsername());
+        model.addAttribute("subjects", subjects);
+        return "subjectManagement";
+    }
     @GetMapping({"/dashboard"})
     public String showDashboard(Model model, @AuthenticationPrincipal User user) {
         Role role = user.getRole();
@@ -72,16 +90,22 @@ public class HomeController {
         model.addAttribute("username", user.getUsername());
         return "studentProgressPage";
     }
+
     @GetMapping({"/quizgeneration"})
     public String showQuizGeneratorPage(Model model, @AuthenticationPrincipal User user) {
         Role role = user.getRole();
         if (role != Role.ROLE_PROFESSOR) {
             return "redirect:/access-denied";
         }
+
+        // Fetch subjects from the database
+        List<Subject> subjects = subjectService.findSubjectsCreatedBy(user.getUsername());
         List<String> questionTypes = Arrays.asList("Multiple Choice", "Fixed Choice", "Short Answer");
 
+        model.addAttribute("subjects", subjects);
         model.addAttribute("questionTypes", questionTypes);
         model.addAttribute("username", user.getUsername());
+
         return "quizGeneration";
     }
 

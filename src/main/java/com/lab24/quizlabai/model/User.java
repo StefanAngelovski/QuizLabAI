@@ -12,6 +12,7 @@ import java.util.Collections;
 @Setter
 @Getter
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "user", schema = "public")
 public class User implements UserDetails {
     @Id
@@ -41,6 +42,9 @@ public class User implements UserDetails {
     private byte[] profileImage;
 
     public User() {}
+
+
+
     public User(String username, String password, String email, Role role) {
         this.username = username;
         this.password = password;
@@ -75,8 +79,16 @@ public class User implements UserDetails {
         this.lastName = lastName;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void setPassword(String password) {
@@ -89,6 +101,10 @@ public class User implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Role getRole() {
+        return role;
     }
 
     public void setRole(Role role) {
@@ -104,22 +120,7 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return this.username;
-    }
-
-    @Override
-    public String getPassword() {
-        return this.password;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(role);
     }
-
 }

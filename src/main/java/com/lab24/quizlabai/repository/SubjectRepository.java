@@ -1,12 +1,11 @@
 package com.lab24.quizlabai.repository;
 
-import com.lab24.quizlabai.model.QuizResult;
+import com.lab24.quizlabai.model.Subject;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 @Repository
-public interface QuizResultRepository extends JpaRepository<QuizResult, Long> {
-    List<QuizResult> findByQuizId(Long quizId);
-
+public interface SubjectRepository extends JpaRepository<Subject, Long> {
+    List<Subject> findByCreatorUsername(String username);
 }
