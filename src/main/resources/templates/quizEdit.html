@@ -202,12 +202,10 @@
 
       <label for="subject">Subject:</label>
       <select id="subject" name="subject" required>
-        <option value="" disabled>Select a subject</option>
-        <option value="Math" th:selected="${quiz.subject=='Math'}">Math</option>
-        <option value="Science" th:selected="${quiz.subject=='Science'}">Science</option>
-        <option value="History" th:selected="${quiz.subject=='History'}">History</option>
-        <option value="Literature" th:selected="${quiz.subject=='Literature'}">Literature</option>
-        <option value="Geography" th:selected="${quiz.subject=='Geography'}">Geography</option>
+        <option value="" disabled selected>Select a subject</option>
+        <th:block th:each="subject : ${subjects}">
+          <option th:value="${subject.id}" th:text="${subject.name}">Subject</option>
+        </th:block>
       </select>
 
       <label for="topic">Topic:</label>

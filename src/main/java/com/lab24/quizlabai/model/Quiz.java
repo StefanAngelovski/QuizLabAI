@@ -18,7 +18,9 @@ public class Quiz {
     private String language;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> questionTypes;
-
+    @ManyToOne
+    @JoinColumn(name = "professor_id")
+    private Professor creator;
     @Lob
     private byte[] pdfFile;
 
@@ -103,5 +105,13 @@ public class Quiz {
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
+    }
+
+    public Professor getCreator() {
+        return creator;
+    }
+
+    public void setCreator(Professor creator) {
+        this.creator = creator;
     }
 }

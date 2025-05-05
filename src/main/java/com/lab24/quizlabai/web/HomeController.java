@@ -42,20 +42,19 @@ public class HomeController {
 
     @GetMapping({"/quiz-management"})
     public String showQuizManagement(Model model, @AuthenticationPrincipal User user) {
-        Role role = user.getRole();
-
-        if (role != Role.ROLE_PROFESSOR) {
+        if (user.getRole() != Role.ROLE_PROFESSOR) {
             return "redirect:/access-denied";
         }
-        List<Quiz> quizzes = quizService.getAllQuizzes();
-        List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(role);
+
+        Professor professor = (Professor) user;
+        List<Quiz> quizzes = quizService.getQuizzesByCreator(professor);
+        List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(user.getRole());
 
         model.addAttribute("sidebarItems", sidebarItems);
         model.addAttribute("username", user.getUsername());
         model.addAttribute("quizzes", quizzes);
         return "quizManagement";
     }
-
 
     @GetMapping("/subject-management")
     public String showSubjectManagementPage(Model model, @AuthenticationPrincipal User user) {
@@ -71,6 +70,7 @@ public class HomeController {
         model.addAttribute("subjects", subjects);
         return "subjectManagement";
     }
+
     @GetMapping({"/dashboard"})
     public String showDashboard(Model model, @AuthenticationPrincipal User user) {
         Role role = user.getRole();
@@ -98,7 +98,6 @@ public class HomeController {
             return "redirect:/access-denied";
         }
 
-        // Fetch subjects from the database
         List<Subject> subjects = subjectService.findSubjectsCreatedBy(user.getUsername());
         List<String> questionTypes = Arrays.asList("Multiple Choice", "Fixed Choice", "Short Answer");
 
@@ -114,13 +113,21 @@ public class HomeController {
         if (user.getRole() != Role.ROLE_PROFESSOR) {
             return "redirect:/access-denied";
         }
+
         Optional<Quiz> quizOptional = Optional.ofNullable(quizService.getQuizById(id));
         if (quizOptional.isPresent()) {
             Quiz quiz = quizOptional.get();
+            List<Subject> subjects = subjectService.findSubjectsCreatedBy(user.getUsername());
+            if (!quiz.getCreator().getUsername().equals(user.getUsername())) {
+                return "redirect:/access-denied";
+            }
+
             if (quiz.getQuestionTypes() == null) {
                 quiz.setQuestionTypes(new ArrayList<>());
             }
             model.addAttribute("quiz", quiz);
+            model.addAttribute("subjects", subjects);
+
             return "quizEdit";
         } else {
             return "redirect:/quiz-management";
@@ -137,6 +144,17 @@ public class HomeController {
         if (user.getRole() != Role.ROLE_PROFESSOR) {
             return "redirect:/access-denied";
         }
+
+        Optional<Quiz> quizOptional = Optional.ofNullable(quizService.getQuizById(id));
+        if (quizOptional.isPresent()) {
+            Quiz quiz = quizOptional.get();
+
+
+            if (!quiz.getCreator().getUsername().equals(user.getUsername())) {
+                return "redirect:/access-denied";
+            }
+        }
+
         try {
             quizService.updateQuiz(id, requestDto, file);
             return "redirect:/quiz-management";
@@ -147,10 +165,20 @@ public class HomeController {
     }
 
     @PostMapping("/delete-quiz/{id}")
-    public String deleteQuiz(@PathVariable("id") Long id,  @AuthenticationPrincipal User user) {
+    public String deleteQuiz(@PathVariable("id") Long id, @AuthenticationPrincipal User user) {
         if (user.getRole() != Role.ROLE_PROFESSOR) {
             return "redirect:/access-denied";
         }
+
+        Optional<Quiz> quizOptional = Optional.ofNullable(quizService.getQuizById(id));
+        if (quizOptional.isPresent()) {
+            Quiz quiz = quizOptional.get();
+
+            if (!quiz.getCreator().getUsername().equals(user.getUsername())) {
+                return "redirect:/access-denied";
+            }
+        }
+
         quizService.deleteQuiz(id);
         return "redirect:/quiz-management";
     }
@@ -167,3 +195,4 @@ public class HomeController {
         return "common/error";
     }
 }
+

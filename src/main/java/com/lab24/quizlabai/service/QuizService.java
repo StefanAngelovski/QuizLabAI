@@ -2,6 +2,7 @@ package com.lab24.quizlabai.service;
 
 import com.lab24.quizlabai.dto.QuizRequestDto;
 import com.lab24.quizlabai.dto.QuizResponseDto;
+import com.lab24.quizlabai.model.Professor;
 import com.lab24.quizlabai.model.Quiz;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,4 +20,6 @@ public interface QuizService {
     QuizResponseDto updateQuiz(Long id, QuizRequestDto requestDto, MultipartFile file) throws IOException;
 
     void deleteQuiz(Long id);
+
+    List<Quiz> getQuizzesByCreator(Professor professor);
 }

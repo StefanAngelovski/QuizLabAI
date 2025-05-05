@@ -238,7 +238,6 @@
       <label for="subject">Subject:</label>
       <select id="subject" name="subject" required>
         <option value="" disabled selected>Select a subject</option>
-        <!-- Thymeleaf loop to generate subject options from the database -->
         <th:block th:each="subject : ${subjects}">
           <option th:value="${subject.id}" th:text="${subject.name}">Subject</option>
         </th:block>

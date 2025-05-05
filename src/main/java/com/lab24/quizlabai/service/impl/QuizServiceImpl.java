@@ -5,16 +5,20 @@ import com.azure.core.exception.ResourceNotFoundException;
 import com.azure.core.http.HttpResponse;
 import com.lab24.quizlabai.dto.QuizRequestDto;
 import com.lab24.quizlabai.dto.QuizResponseDto;
+import com.lab24.quizlabai.model.Professor;
 import com.lab24.quizlabai.model.Question;
 
 import com.lab24.quizlabai.model.Quiz;
+import com.lab24.quizlabai.model.User;
 import com.lab24.quizlabai.repository.QuizRepository;
+import com.lab24.quizlabai.repository.UserRepository;
 import com.lab24.quizlabai.service.AzureAI.AzureOpenAIService;
 import com.lab24.quizlabai.service.QuizService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,12 +31,15 @@ public class QuizServiceImpl implements QuizService {
 
     private final AzureOpenAIService azureOpenAIService;
     private final QuizRepository quizRepository;
+    private final UserRepository userRepository; // Add this to get user info
 
     @Autowired
     public QuizServiceImpl(AzureOpenAIService azureOpenAIService,
-                           QuizRepository quizRepository) {
+                           QuizRepository quizRepository,
+                           UserRepository userRepository) {
         this.azureOpenAIService = azureOpenAIService;
         this.quizRepository = quizRepository;
+        this.userRepository = userRepository;  // Inject user repository
     }
 
     @Override
@@ -49,6 +56,13 @@ public class QuizServiceImpl implements QuizService {
             quiz.setPdfFile(file.getBytes());
         }
 
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = currentUser.getUsername();
+
+        Professor professor = (Professor) userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Professor not found: " + username));
+
+        quiz.setCreator(professor);
 
         List<Question> questions = azureOpenAIService.generateQuestions(quiz);
 
@@ -56,7 +70,6 @@ public class QuizServiceImpl implements QuizService {
         questions.forEach(q -> q.setQuiz(quiz));
 
         Quiz savedQuiz = quizRepository.save(quiz);
-
 
         QuizResponseDto responseDto = new QuizResponseDto();
         responseDto.setSubject(savedQuiz.getSubject());
@@ -66,6 +79,7 @@ public class QuizServiceImpl implements QuizService {
         responseDto.setDifficulty(savedQuiz.getDifficulty());
         responseDto.setQuestions(savedQuiz.getQuestions());
         responseDto.setLanguage(savedQuiz.getLanguage());
+
         return responseDto;
     }
 
@@ -79,9 +93,7 @@ public class QuizServiceImpl implements QuizService {
     public Quiz getQuizById(Long quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElse(null);
         if (quiz != null) {
-
             quiz.getQuestions().forEach(q -> q.getOptions().size());
-
             if (quiz.getQuestionTypes() != null) {
                 quiz.getQuestionTypes().size();
             }
@@ -94,8 +106,15 @@ public class QuizServiceImpl implements QuizService {
                                       QuizRequestDto requestDto,
                                       MultipartFile file) throws IOException {
 
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = currentUser.getUsername();
+
         Quiz existing = quizRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Quiz not found: " + id));
+
+        if (!existing.getCreator().getUsername().equals(username)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only update quizzes you created.");
+        }
 
         existing.setSubject(requestDto.getSubject());
         existing.setTopic(requestDto.getTopic());
@@ -120,8 +139,25 @@ public class QuizServiceImpl implements QuizService {
         return dto;
     }
 
-
     public void deleteQuiz(Long id) {
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = currentUser.getUsername();
+
+        Quiz quiz = quizRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Quiz not found: " + id));
+
+        if (!quiz.getCreator().getUsername().equals(username)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only delete quizzes you created.");
+        }
+
         quizRepository.deleteById(id);
     }
+
+    public List<Quiz> getQuizzesByCreator(Professor professor) {
+        return quizRepository.findByCreator(professor);
+    }
 }
+
+
+
+
