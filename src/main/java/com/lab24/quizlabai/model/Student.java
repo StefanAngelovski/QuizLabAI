@@ -9,7 +9,7 @@ import java.util.Set;
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Student extends User {
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "student_subjects",
             joinColumns = @JoinColumn(name = "student_id"),

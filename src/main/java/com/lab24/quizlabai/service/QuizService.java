@@ -4,6 +4,7 @@ import com.lab24.quizlabai.dto.QuizRequestDto;
 import com.lab24.quizlabai.dto.QuizResponseDto;
 import com.lab24.quizlabai.model.Professor;
 import com.lab24.quizlabai.model.Quiz;
+import com.lab24.quizlabai.model.Student;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -22,4 +23,6 @@ public interface QuizService {
     void deleteQuiz(Long id);
 
     List<Quiz> getQuizzesByCreator(Professor professor);
+
+    List<Quiz> getQuizzesForStudent(Student student);
 }

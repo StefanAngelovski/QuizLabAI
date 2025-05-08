@@ -5,6 +5,7 @@ import com.lab24.quizlabai.service.SubjectService;
 import com.lab24.quizlabai.model.Role;
 import com.lab24.quizlabai.model.User;
 import com.lab24.quizlabai.model.enums.SidebarItem;
+import com.lab24.quizlabai.service.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,9 +19,11 @@ import java.util.Optional;
 public class SubjectController {
 
     private final SubjectService subjectService;
+    private final UserService userService;
 
-    public SubjectController(SubjectService subjectService) {
+    public SubjectController(SubjectService subjectService, UserService userService) {
         this.subjectService = subjectService;
+        this.userService = userService;
     }
 
     @GetMapping("/management")
@@ -102,7 +105,7 @@ public class SubjectController {
 
 
 
-        @PostMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteSubject(@PathVariable("id") Long id, @AuthenticationPrincipal User user) {
         if (user.getRole() != Role.ROLE_PROFESSOR) {
             return "redirect:/access-denied";
@@ -111,4 +114,35 @@ public class SubjectController {
         subjectService.deleteSubject(id);
         return "redirect:/subjects/management";
     }
+    @PostMapping("/{subjectId}/add-student")
+    public String addStudentToSubject(@PathVariable Long subjectId,
+                                      @RequestParam String studentUsername,
+                                      @AuthenticationPrincipal User user) {
+        if (user.getRole() != Role.ROLE_PROFESSOR) {
+            return "redirect:/access-denied";
+        }
+
+        subjectService.addStudentToSubject(subjectId, studentUsername);
+        return "redirect:/subjects/management";
+    }
+    @GetMapping("/{id}/assign-student")
+    public String showAssignStudentPage(@PathVariable Long id, Model model) {
+        Subject subject = subjectService.findById(id);
+        List<User> allStudents = userService.findAllStudents();
+        model.addAttribute("subject", subject);
+        model.addAttribute("allStudents", allStudents);
+        return "studentAssignToSubject";
+    }
+    @PostMapping("/{subjectId}/remove-student")
+    public String removeStudentFromSubject(@PathVariable Long subjectId,
+                                           @RequestParam String studentUsername,
+                                           @AuthenticationPrincipal User user) {
+        if (user.getRole() != Role.ROLE_PROFESSOR) {
+            return "redirect:/access-denied";
+        }
+
+        subjectService.removeStudentFromSubject(subjectId, studentUsername);
+        return "redirect:/subjects/management";
+    }
+
 }

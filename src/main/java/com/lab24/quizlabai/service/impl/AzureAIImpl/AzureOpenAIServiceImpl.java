@@ -64,7 +64,7 @@ public class AzureOpenAIServiceImpl implements AzureOpenAIService {
                 quiz.getNumQuestions(),
                 quiz.getDifficulty(),
                 quiz.getTopic(),
-                quiz.getSubject()
+                quiz.getSubject().getName()
         ));
 
         List<String> questionTypes = quiz.getQuestionTypes();

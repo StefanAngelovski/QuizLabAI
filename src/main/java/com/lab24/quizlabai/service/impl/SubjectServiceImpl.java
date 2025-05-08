@@ -1,6 +1,7 @@
 package com.lab24.quizlabai.service.impl;
 
 import com.lab24.quizlabai.model.Professor;
+import com.lab24.quizlabai.model.Student;
 import com.lab24.quizlabai.model.Subject;
 import com.lab24.quizlabai.model.User;
 import com.lab24.quizlabai.repository.SubjectRepository;
@@ -77,5 +78,49 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public List<Subject> findSubjectsCreatedBy(String username) {
         return subjectRepository.findByCreatorUsername(username);
+    }
+    @Override
+    public void addStudentToSubject(Long subjectId, String studentUsername) {
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() ->
+                new IllegalArgumentException("Subject not found"));
+        User user = userRepository.findByUsername(studentUsername).orElseThrow(() ->
+                new IllegalArgumentException("User not found"));
+
+        if (!(user instanceof Student)) {
+            throw new IllegalArgumentException("User is not a student");
+        }
+
+        Student student = (Student) user;
+
+
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!subject.getCreator().getUsername().equals(currentUsername)) {
+            throw new AccessDeniedException("You are not the creator of this subject.");
+        }
+
+        student.enrollInSubject(subject);
+        userRepository.save(student);
+    }
+
+    @Override
+    public void removeStudentFromSubject(Long subjectId, String studentUsername) {
+        Subject subject = subjectRepository.findById(subjectId).orElseThrow(() ->
+                new IllegalArgumentException("Subject not found"));
+        User user = userRepository.findByUsername(studentUsername).orElseThrow(() ->
+                new IllegalArgumentException("User not found"));
+
+        if (!(user instanceof Student)) {
+            throw new IllegalArgumentException("User is not a student");
+        }
+
+        Student student = (Student) user;
+
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!subject.getCreator().getUsername().equals(currentUsername)) {
+            throw new AccessDeniedException("You are not the creator of this subject.");
+        }
+
+        student.removeFromSubject(subject);
+        userRepository.save(student);
     }
 }

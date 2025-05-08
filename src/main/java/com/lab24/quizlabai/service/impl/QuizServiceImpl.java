@@ -1,16 +1,10 @@
 package com.lab24.quizlabai.service.impl;
 
-
-import com.azure.core.exception.ResourceNotFoundException;
-import com.azure.core.http.HttpResponse;
 import com.lab24.quizlabai.dto.QuizRequestDto;
 import com.lab24.quizlabai.dto.QuizResponseDto;
-import com.lab24.quizlabai.model.Professor;
-import com.lab24.quizlabai.model.Question;
-
-import com.lab24.quizlabai.model.Quiz;
-import com.lab24.quizlabai.model.User;
+import com.lab24.quizlabai.model.*;
 import com.lab24.quizlabai.repository.QuizRepository;
+import com.lab24.quizlabai.repository.SubjectRepository;
 import com.lab24.quizlabai.repository.UserRepository;
 import com.lab24.quizlabai.service.AzureAI.AzureOpenAIService;
 import com.lab24.quizlabai.service.QuizService;
@@ -24,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,21 +26,27 @@ public class QuizServiceImpl implements QuizService {
 
     private final AzureOpenAIService azureOpenAIService;
     private final QuizRepository quizRepository;
-    private final UserRepository userRepository; // Add this to get user info
+    private final UserRepository userRepository;
+    private final SubjectRepository subjectRepository;
 
     @Autowired
     public QuizServiceImpl(AzureOpenAIService azureOpenAIService,
                            QuizRepository quizRepository,
-                           UserRepository userRepository) {
+                           UserRepository userRepository,
+                           SubjectRepository subjectRepository) {
         this.azureOpenAIService = azureOpenAIService;
         this.quizRepository = quizRepository;
-        this.userRepository = userRepository;  // Inject user repository
+        this.userRepository = userRepository;
+        this.subjectRepository = subjectRepository;
     }
 
     @Override
     public QuizResponseDto generateQuiz(QuizRequestDto requestDto, MultipartFile file) throws IOException {
+        Subject subject = subjectRepository.findById(requestDto.getSubjectId())
+                .orElseThrow(() -> new EntityNotFoundException("Subject not found: " + requestDto.getSubjectId()));
+
         Quiz quiz = new Quiz();
-        quiz.setSubject(requestDto.getSubject());
+        quiz.setSubject(subject);
         quiz.setTopic(requestDto.getTopic());
         quiz.setNumQuestions(requestDto.getNumQuestions());
         quiz.setQuizTime(requestDto.getQuizTime());
@@ -61,18 +62,16 @@ public class QuizServiceImpl implements QuizService {
 
         Professor professor = (Professor) userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("Professor not found: " + username));
-
         quiz.setCreator(professor);
 
         List<Question> questions = azureOpenAIService.generateQuestions(quiz);
-
         quiz.setQuestions(questions);
         questions.forEach(q -> q.setQuiz(quiz));
 
         Quiz savedQuiz = quizRepository.save(quiz);
 
         QuizResponseDto responseDto = new QuizResponseDto();
-        responseDto.setSubject(savedQuiz.getSubject());
+        responseDto.setSubjectName(savedQuiz.getSubject().getName());
         responseDto.setTopic(savedQuiz.getTopic());
         responseDto.setNumQuestions(savedQuiz.getNumQuestions());
         responseDto.setQuizTime(savedQuiz.getQuizTime());
@@ -102,10 +101,7 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public QuizResponseDto updateQuiz(Long id,
-                                      QuizRequestDto requestDto,
-                                      MultipartFile file) throws IOException {
-
+    public QuizResponseDto updateQuiz(Long id, QuizRequestDto requestDto, MultipartFile file) throws IOException {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = currentUser.getUsername();
 
@@ -116,20 +112,24 @@ public class QuizServiceImpl implements QuizService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only update quizzes you created.");
         }
 
-        existing.setSubject(requestDto.getSubject());
+        Subject subject = subjectRepository.findById(requestDto.getSubjectId())
+                .orElseThrow(() -> new EntityNotFoundException("Subject not found: " + requestDto.getSubjectId()));
+
+        existing.setSubject(subject);
         existing.setTopic(requestDto.getTopic());
         existing.setNumQuestions(requestDto.getNumQuestions());
         existing.setQuizTime(requestDto.getQuizTime());
         existing.setDifficulty(requestDto.getDifficulty());
         existing.setQuestionTypes(requestDto.getQuestionTypes());
         existing.setLanguage(requestDto.getLanguage());
+
         if (file != null && !file.isEmpty()) {
             existing.setPdfFile(file.getBytes());
         }
 
         Quiz saved = quizRepository.save(existing);
         QuizResponseDto dto = new QuizResponseDto();
-        dto.setSubject(saved.getSubject());
+        dto.setSubjectName(saved.getSubject().getName());
         dto.setTopic(saved.getTopic());
         dto.setNumQuestions(saved.getNumQuestions());
         dto.setQuizTime(saved.getQuizTime());
@@ -139,6 +139,8 @@ public class QuizServiceImpl implements QuizService {
         return dto;
     }
 
+
+    @Override
     public void deleteQuiz(Long id) {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = currentUser.getUsername();
@@ -153,11 +155,19 @@ public class QuizServiceImpl implements QuizService {
         quizRepository.deleteById(id);
     }
 
+    @Override
     public List<Quiz> getQuizzesByCreator(Professor professor) {
         return quizRepository.findByCreator(professor);
     }
+
+    @Transactional
+    public List<Quiz> getQuizzesForStudent(Student student) {
+        student.getEnrolledSubjects().size();
+
+        List<Quiz> quizzes = new ArrayList<>();
+        for (Subject subject : student.getEnrolledSubjects()) {
+            quizzes.addAll(quizRepository.findBySubject(subject));
+        }
+        return quizzes;
+    }
 }
-
-
-
-

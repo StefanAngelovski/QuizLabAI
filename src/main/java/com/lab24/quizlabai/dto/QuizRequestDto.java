@@ -1,4 +1,5 @@
 package com.lab24.quizlabai.dto;
+import com.lab24.quizlabai.model.Subject;
 import lombok.Data;
 
 import java.util.List;
@@ -6,7 +7,7 @@ import java.util.List;
 
 @Data
 public class QuizRequestDto {
-    private String subject;
+    private Long subjectId;
     private String topic;
     private int numQuestions;
     private int quizTime;
@@ -22,12 +23,12 @@ public class QuizRequestDto {
         this.language = language;
     }
 
-    public String getSubject() {
-        return subject;
+    public Long getSubjectId() {
+        return subjectId;
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setSubjectId(Long subjectId) {
+        this.subjectId = subjectId;
     }
 
     public String getTopic() {

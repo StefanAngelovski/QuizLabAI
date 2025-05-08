@@ -236,12 +236,13 @@
       <label class="intro">Please fill in the fields:</label>
 
       <label for="subject">Subject:</label>
-      <select id="subject" name="subject" required>
+      <select id="subject" name="subjectId" required>
         <option value="" disabled selected>Select a subject</option>
         <th:block th:each="subject : ${subjects}">
           <option th:value="${subject.id}" th:text="${subject.name}">Subject</option>
         </th:block>
       </select>
+
 
       <label for="topic">Topic:</label>
       <input type="text" id="topic" name="topic" placeholder="Enter the topic for the quiz" required>

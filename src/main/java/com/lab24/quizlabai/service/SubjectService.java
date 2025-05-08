@@ -10,4 +10,6 @@ public interface SubjectService {
     void deleteSubject(Long id);
     Subject findById(Long id);
     List<Subject> findSubjectsCreatedBy(String username);
+    void addStudentToSubject(Long subjectId, String studentUsername);
+    void removeStudentFromSubject(Long subjectId, String studentUsername);
 }

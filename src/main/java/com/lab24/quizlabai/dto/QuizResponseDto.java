@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 public class QuizResponseDto {
-    private String subject;
+    private String subjectName;
     private String topic;
     private int numQuestions;
     private int quizTime;
@@ -23,12 +23,12 @@ public class QuizResponseDto {
         this.language = language;
     }
 
-    public String getSubject() {
-        return subject;
+    public String getSubjectName() {
+        return subjectName;
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
     }
 
     public String getTopic() {

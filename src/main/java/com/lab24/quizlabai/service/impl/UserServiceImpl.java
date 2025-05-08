@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -84,7 +85,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(User existingUser, User updatedUser, MultipartFile image) throws MaximumFileSizeException{
+    public void updateUser(User existingUser, User updatedUser, MultipartFile image) throws MaximumFileSizeException {
         if (!existingUser.getUsername().equals(updatedUser.getUsername())) {
             Optional<User> userByUsername = userRepository.findByUsername(updatedUser.getUsername());
             if (userByUsername.isPresent() && !userByUsername.get().getId().equals(existingUser.getId())) {
@@ -139,6 +140,9 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(ProfilePictureNotFoundException::new);
     }
 
+    @Override
+    public List<User> findAllStudents() {
+        return userRepository.findByRole(Role.ROLE_STUDENT);
+    }
+
 }
-
-

@@ -158,7 +158,7 @@
 <div class="container">
     <div class="timer">Remaining Time: <span id="time"></span></div>
 
-    <h5 class="quiz-name" th:text="${quiz.subject}">Quiz Subject</h5>
+    <h5 class="quiz-name" th:text="${quiz.subject.name}">Quiz Subject</h5>
 
     <div class="progress">
         <span th:text="${questionNumber}">1</span>/<span th:text="${totalQuestions}">10</span>

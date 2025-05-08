@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Assign Student to Subject</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/2662512c9c.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header.html}"></div>
+<div class="container">
+    <div th:replace="~{fragments/sidebar.html}"></div>
+    <div class="content">
+        <div class="breadcrumb mt-3">
+            <span>👥</span>
+            <a href="/dashboard">Dashboard</a> /
+            <a href="/subjects/management">Subject Management</a> /
+            <span class="font">Assign Student</span>
+        </div>
+
+        <main class="mt-4">
+            <div class="card shadow-sm p-4">
+                <h3 class="mb-4 text-primary">
+                    <i class="fas fa-user-plus me-2"></i>Assign Student to Subject
+                </h3>
+
+                <form th:action="@{/subjects/{id}/add-student(id=${subject.id})}" method="post">
+                    <div class="mb-3">
+                        <label for="subjectName" class="form-label">Subject</label>
+                        <input type="text" class="form-control" id="subjectName" th:value="${subject.name}" readonly>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="studentUsername" class="form-label">Select Student</label>
+                        <select class="form-select" id="studentUsername" name="studentUsername" required>
+                            <option value="" disabled selected>Select a student</option>
+                            <option th:each="student : ${allStudents}"
+                                    th:value="${student.username}"
+                                    th:text="${student.username}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i>Assign Student
+                        </button>
+                        <a th:href="@{/subjects/management}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Back
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card mt-4 shadow-sm p-4">
+                <h5 class="mb-3 text-secondary">
+                    <i class="fas fa-users me-2"></i>Currently Assigned Students
+                </h5>
+                <ul class="list-group">
+                    <li class="list-group-item" th:each="student : ${subject.students}">
+                        <span th:text="${student.username}"></span>
+                        <form th:action="@{/subjects/{subjectId}/remove-student(subjectId=${subject.id})}" method="post" class="d-inline">
+                            <input type="hidden" name="studentUsername" th:value="${student.username}" />
+                            <button type="submit" class="btn btn-danger btn-sm ms-2">Remove</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
