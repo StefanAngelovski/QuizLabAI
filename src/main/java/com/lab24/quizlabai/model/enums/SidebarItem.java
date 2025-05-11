@@ -1,7 +1,6 @@
 package com.lab24.quizlabai.model.enums;
 
 import com.lab24.quizlabai.model.Role;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;

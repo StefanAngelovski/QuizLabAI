@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -200,12 +199,9 @@ public class HomeController {
         model.addAttribute("sidebarItems", sidebarItems);
         model.addAttribute("username", user.getUsername());
 
-        List<Quiz> quizzes = new ArrayList<>();
+        List<Quiz> quizzes;
 
         if (user instanceof Student student) {
-            Set<String> enrolledSubjectNames = student.getEnrolledSubjects().stream()
-                    .map(Subject::getName)
-                    .collect(Collectors.toSet());
             quizzes = quizService.getQuizzesForStudent(student);
             model.addAttribute("quizzes", quizzes);
             return "availableQuizzes";

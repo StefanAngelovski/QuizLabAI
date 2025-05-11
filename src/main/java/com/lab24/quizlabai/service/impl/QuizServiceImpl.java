@@ -90,14 +90,7 @@ public class QuizServiceImpl implements QuizService {
     @Override
     @Transactional
     public Quiz getQuizById(Long quizId) {
-        Quiz quiz = quizRepository.findById(quizId).orElse(null);
-        if (quiz != null) {
-            quiz.getQuestions().forEach(q -> q.getOptions().size());
-            if (quiz.getQuestionTypes() != null) {
-                quiz.getQuestionTypes().size();
-            }
-        }
-        return quiz;
+        return quizRepository.findById(quizId).orElse(null);
     }
 
     @Override
