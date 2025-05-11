@@ -13,16 +13,24 @@ public class Quiz {
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
+
     private String topic;
+
     private int numQuestions;
+
     private int quizTime;
+
     private String difficulty;
+
     private String language;
+
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> questionTypes;
+
     @ManyToOne
     @JoinColumn(name = "professor_id")
     private Professor creator;
+
     @Lob
     private byte[] pdfFile;
 

@@ -7,7 +7,9 @@ import com.lab24.quizlabai.model.enums.SidebarItem;
 import com.lab24.quizlabai.service.QuizService;
 
 import com.lab24.quizlabai.service.SubjectService;
-import org.springframework.security.core.Authentication;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -205,14 +207,42 @@ public class HomeController {
                     .map(Subject::getName)
                     .collect(Collectors.toSet());
             quizzes = quizService.getQuizzesForStudent(student);
+            model.addAttribute("quizzes", quizzes);
+            return "availableQuizzes";
+        } else {
+            return "redirect:/access-denied";
         }
-
-        model.addAttribute("quizzes", quizzes);
-        return "availableQuizzes";
     }
 
+    @GetMapping("/study-materials")
+    public String showMaterials(Model model, @AuthenticationPrincipal User user) {
+        List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(user.getRole());
+        model.addAttribute("sidebarItems", sidebarItems);
+        model.addAttribute("username", user.getUsername());
+
+        if (user instanceof Student student) {
+            List<Quiz> quizzes = quizService.getQuizzesForStudent(student).stream()
+                    .filter(quiz -> quiz.getPdfFile() != null && quiz.getPdfFile().length > 0)
+                    .toList();
+            model.addAttribute("quizzes", quizzes);
+            return "studyMaterials";
+        } else {
+            return "redirect:/access-denied";
+        }
 
 
+    }
 
+    @GetMapping("/quizzes/{id}/pdf")
+    public ResponseEntity<byte[]> downloadPdf(@PathVariable Long id) {
+        Quiz quiz = quizService.getQuizById(id);
+
+        byte[] pdfData = quiz.getPdfFile();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=quiz_" + quiz.getTopic() + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfData);
+    }
 }
 

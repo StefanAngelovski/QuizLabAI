@@ -162,8 +162,6 @@ public class QuizServiceImpl implements QuizService {
 
     @Transactional
     public List<Quiz> getQuizzesForStudent(Student student) {
-        student.getEnrolledSubjects().size();
-
         List<Quiz> quizzes = new ArrayList<>();
         for (Subject subject : student.getEnrolledSubjects()) {
             quizzes.addAll(quizRepository.findBySubject(subject));

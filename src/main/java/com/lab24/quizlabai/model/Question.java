@@ -13,8 +13,12 @@ public class Question {
     private Long id;
 
     private String type;
+
+    @Lob
     private String text;
+
     private int points;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
