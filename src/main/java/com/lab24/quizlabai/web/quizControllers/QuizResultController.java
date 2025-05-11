@@ -2,8 +2,10 @@ package com.lab24.quizlabai.web.quizControllers;
 
 import com.lab24.quizlabai.model.Question;
 import com.lab24.quizlabai.model.Quiz;
+import com.lab24.quizlabai.model.QuizResult;
 import com.lab24.quizlabai.model.QuizStatistics;
 import com.lab24.quizlabai.service.AzureAI.AzureOpenAIService;
+import com.lab24.quizlabai.service.QuizResultService;
 import com.lab24.quizlabai.service.QuizService;
 import com.lab24.quizlabai.service.QuizStatisticsService;
 import jakarta.servlet.http.HttpSession;
@@ -28,6 +30,9 @@ public class QuizResultController {
 
     @Autowired
     private QuizStatisticsService quizStatisticsService;
+
+    @Autowired
+    private QuizResultService quizResultService;
 
     @Autowired
     private AzureOpenAIService azureOpenAIService;
@@ -71,6 +76,7 @@ public class QuizResultController {
 
         return "quizResultPage";
     }
+
     @GetMapping("/{quizId}/statistics")
     public String showQuizStatistics(@PathVariable Long quizId, Model model) {
         QuizStatistics quizStatistics = quizStatisticsService.calculateStatistics(quizId);

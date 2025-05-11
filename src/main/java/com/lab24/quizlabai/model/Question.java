@@ -23,7 +23,7 @@ public class Question {
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> options;
 
     private String correctAnswer;

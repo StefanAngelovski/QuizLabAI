@@ -14,7 +14,7 @@ public enum SidebarItem {
     SUBMITTED_QUIZZES("Submitted Quizzes", "📥️", "/dashboard", Role.ROLE_PROFESSOR),
     MANAGE_QUIZZES("Manage Quizzes", "✏️", "/quiz-management", Role.ROLE_PROFESSOR),
     MANAGE_SUBJECTS("Manage Subjects", "✏️", "/subject-management", Role.ROLE_PROFESSOR),
-    COMPLETED_QUIZZES("Completed Quizzes", "✅", "/dashboard", Role.ROLE_STUDENT),
+    COMPLETED_QUIZZES("Completed Quizzes", "✅", "/completed-quizzes", Role.ROLE_STUDENT),
     PROFESSOR_FEEDBACK("Professor Feedback", "💬", "/dashboard", Role.ROLE_STUDENT),
     STUDY_RESOURCES("Study Materials", "📚", "/study-materials", Role.ROLE_STUDENT, Role.ROLE_STUDENT),
     REPORTS("Reports & Analytics", "📈", "/dashboard", Role.ROLE_PROFESSOR),

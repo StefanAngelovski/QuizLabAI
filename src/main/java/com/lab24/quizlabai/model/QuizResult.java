@@ -67,4 +67,10 @@ public class QuizResult {
     public void setTimeSpent(double timeSpent) {
         this.timeSpent = timeSpent;
     }
+
+    public String getFormattedTimeSpent() {
+        long minutes = (long) (timeSpent / 60);
+        long seconds = (long) (timeSpent % 60);
+        return String.format("%d minutes %d seconds", minutes, seconds);
+    }
 }

@@ -26,35 +26,35 @@
 
             <div class="row mt-4">
                 <div th:each="subject : ${subjects}" class="col-12 col-md-4 col-lg-4 mt-3">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <div class="d-flex flex-column align-items-center">
-                                <i class="fas fa-book" style="font-size: 3rem; color: #007bff;"></i>
+                    <div class="card h-100 shadow-sm d-flex">
+                        <div class="card-body d-flex flex-column justify-content-between text-center">
+                            <div>
+                                <i class="fas fa-book mb-3" style="font-size: 3rem; color: #007bff;"></i>
                                 <h4 th:text="${subject.name}" class="mt-2">Subject Name</h4>
                                 <p th:text="${subject.description}" class="text-muted">Subject Description</p>
-
-                                <div class="d-flex gap-2 mt-2">
-                                    <a th:href="@{'/subjects/edit/' + ${subject.id}}"
-                                       class="btn btn-warning text-white flex-fill uniform-btn">
-                                        Edit
-                                    </a>
-                                    <form th:action="@{'/subjects/delete/' + ${subject.id}}"
-                                          method="post"
-                                          onsubmit="return confirm('Are you sure you want to delete this subject?');"
-                                          class="flex-fill m-0">
-                                        <button type="submit" class="btn btn-danger w-100 uniform-btn">
-                                            Delete
-                                        </button>
-                                    </form>
-                                    <a th:href="@{'/subjects/' + ${subject.id} + '/assign-student'}"
-                                       class="btn btn-secondary flex-fill uniform-btn">
-                                        Add Student
-                                    </a>
-                                </div>
+                            </div>
+                            <div class="d-flex gap-2 mt-4">
+                                <a th:href="@{'/subjects/edit/' + ${subject.id}}"
+                                   class="btn btn-warning text-white flex-fill uniform-btn">
+                                    Edit
+                                </a>
+                                <form th:action="@{'/subjects/delete/' + ${subject.id}}"
+                                      method="post"
+                                      onsubmit="return confirm('Are you sure you want to delete this subject?');"
+                                      class="flex-fill m-0">
+                                    <button type="submit" class="btn btn-danger w-100 uniform-btn">
+                                        Delete
+                                    </button>
+                                </form>
+                                <a th:href="@{'/subjects/' + ${subject.id} + '/assign-student'}"
+                                   class="btn btn-secondary flex-fill uniform-btn">
+                                    Add Student
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </main>
     </div>

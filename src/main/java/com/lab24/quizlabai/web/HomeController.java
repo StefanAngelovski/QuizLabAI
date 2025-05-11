@@ -4,6 +4,7 @@ package com.lab24.quizlabai.web;
 import com.lab24.quizlabai.dto.QuizRequestDto;
 import com.lab24.quizlabai.model.*;
 import com.lab24.quizlabai.model.enums.SidebarItem;
+import com.lab24.quizlabai.service.QuizResultService;
 import com.lab24.quizlabai.service.QuizService;
 
 import com.lab24.quizlabai.service.SubjectService;
@@ -23,10 +24,12 @@ import java.util.*;
 public class HomeController {
     private final QuizService quizService;
     private final SubjectService subjectService;
+    private final QuizResultService quizResultService;
 
-    public HomeController(QuizService quizService, SubjectService subjectService) {
+    public HomeController(QuizService quizService, SubjectService subjectService, QuizResultService quizResultService) {
         this.quizService = quizService;
         this.subjectService = subjectService;
+        this.quizResultService = quizResultService;
     }
 
     @GetMapping({"/", "/home", "/index"})
@@ -193,6 +196,7 @@ public class HomeController {
 
         return "common/error";
     }
+
     @GetMapping("/available-quizzes")
     public String showAvailableQuizzes(Model model, @AuthenticationPrincipal User user) {
         List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(user.getRole());
@@ -205,6 +209,23 @@ public class HomeController {
             quizzes = quizService.getQuizzesForStudent(student);
             model.addAttribute("quizzes", quizzes);
             return "availableQuizzes";
+        } else {
+            return "redirect:/access-denied";
+        }
+    }
+
+    @GetMapping("/completed-quizzes")
+    public String showCompletedQuizzes(Model model, @AuthenticationPrincipal User user) {
+        List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(user.getRole());
+        model.addAttribute("sidebarItems", sidebarItems);
+        model.addAttribute("username", user.getUsername());
+
+        List<QuizResult> quizResults;
+
+        if (user instanceof Student student) {
+            quizResults = quizResultService.getCompletedQuizResultsForStudent(student);
+            model.addAttribute("quizResults", quizResults);
+            return "completedQuizzes";
         } else {
             return "redirect:/access-denied";
         }
@@ -225,8 +246,6 @@ public class HomeController {
         } else {
             return "redirect:/access-denied";
         }
-
-
     }
 
     @GetMapping("/quizzes/{id}/pdf")

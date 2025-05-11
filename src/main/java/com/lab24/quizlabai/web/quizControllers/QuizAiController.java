@@ -1,11 +1,11 @@
 package com.lab24.quizlabai.web.quizControllers;
 
-import com.lab24.quizlabai.model.EvaluationResult;
-import com.lab24.quizlabai.model.Question;
-import com.lab24.quizlabai.model.Quiz;
+import com.lab24.quizlabai.model.*;
 import com.lab24.quizlabai.service.AzureAI.AzureOpenAIService;
+import com.lab24.quizlabai.service.QuizResultService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,12 +20,19 @@ import java.util.Map;
 @RequestMapping("/attempt/ai")
 public class QuizAiController {
 
-    @Autowired
-    private AzureOpenAIService azureOpenAIService;
+    private final AzureOpenAIService azureOpenAIService;
+
+    private final QuizResultService quizResultService;
+
+    public QuizAiController(AzureOpenAIService azureOpenAIService, QuizResultService quizResultService) {
+        this.azureOpenAIService = azureOpenAIService;
+        this.quizResultService = quizResultService;
+    }
 
     @PostMapping("/submit")
     public String submitAndCheckWithAI(@RequestParam(value = "selectedOptions", required = false) List<String> selectedOptions,
                                        @RequestParam(value = "shortAnswer", required = false) String shortAnswer,
+                                       @AuthenticationPrincipal User user,
                                        HttpSession session, Model model) {
 
         Map<Long, List<String>> userAnswers = (Map<Long, List<String>>) session.getAttribute("userAnswers");
@@ -39,10 +46,11 @@ public class QuizAiController {
         }
 
         String timeTaken = (String) session.getAttribute("timeTaken");
+        Long duration = 0L;
         if (timeTaken == null) {
             Long startTime = (Long) session.getAttribute("startTime");
             if (startTime != null) {
-                long duration = (System.currentTimeMillis() - startTime) / 1000;
+                duration = (System.currentTimeMillis() - startTime) / 1000;
                 timeTaken = String.format("%d minutes %d seconds", duration / 60, duration % 60);
                 session.setAttribute("timeTaken", timeTaken);
             } else {
@@ -57,6 +65,8 @@ public class QuizAiController {
 
         String aiEvaluationResults = azureOpenAIService.evaluateAnswersWithAI(questions, userAnswers);
         List<EvaluationResult> evaluationResults = parseEvaluationResults(aiEvaluationResults);
+
+        quizResultService.saveResult(quiz, user, (double) score, (double) duration);
 
         model.addAttribute("evaluationResult", evaluationResults);
         model.addAttribute("score", score);
