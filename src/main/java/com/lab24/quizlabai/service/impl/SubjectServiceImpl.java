@@ -27,10 +27,9 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public void saveSubject(Subject subject, String professorUsername) {
         User user = userRepository.findByUsername(professorUsername).orElseThrow();
-        if (!(user instanceof Professor)) {
+        if (!(user instanceof Professor professor)) {
             throw new IllegalArgumentException("User is not a professor.");
         }
-        Professor professor = (Professor) user;
         subject.setCreator(professor);
         subjectRepository.save(subject);
         professor.addTeachingSubject(subject);
@@ -86,11 +85,9 @@ public class SubjectServiceImpl implements SubjectService {
         User user = userRepository.findByUsername(studentUsername).orElseThrow(() ->
                 new IllegalArgumentException("User not found"));
 
-        if (!(user instanceof Student)) {
+        if (!(user instanceof Student student)) {
             throw new IllegalArgumentException("User is not a student");
         }
-
-        Student student = (Student) user;
 
 
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -103,17 +100,31 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public List<Student> findStudentsForProfessor(Professor professor, String search) {
+        return findSubjectsCreatedBy(professor.getUsername()).stream()
+                .flatMap(subject -> subject.getStudents().stream())
+                .filter(student -> {
+                    if (search != null && !search.trim().isEmpty()) {
+                        String searchLower = search.toLowerCase();
+                        return (student.getFirstName() != null && student.getFirstName().toLowerCase().contains(searchLower)) ||
+                                (student.getLastName() != null && student.getLastName().toLowerCase().contains(searchLower)) ||
+                                (student.getUsername() != null && student.getUsername().toLowerCase().contains(searchLower));
+                    }
+                    return true;
+                })
+                .toList();
+    }
+
+    @Override
     public void removeStudentFromSubject(Long subjectId, String studentUsername) {
         Subject subject = subjectRepository.findById(subjectId).orElseThrow(() ->
                 new IllegalArgumentException("Subject not found"));
         User user = userRepository.findByUsername(studentUsername).orElseThrow(() ->
                 new IllegalArgumentException("User not found"));
 
-        if (!(user instanceof Student)) {
+        if (!(user instanceof Student student)) {
             throw new IllegalArgumentException("User is not a student");
         }
-
-        Student student = (Student) user;
 
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         if (!subject.getCreator().getUsername().equals(currentUsername)) {

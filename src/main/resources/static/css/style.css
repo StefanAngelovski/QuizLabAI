@@ -385,6 +385,12 @@ textarea.form-control {
     margin-bottom: 10px;
 }
 
+.user-name-placeholder {
+    color: #FF6347;
+    font-style: italic;
+    font-weight: bold;
+}
+
 footer {
     background-color: black;
     color: white;
@@ -395,3 +401,4 @@ footer {
 footer p {
     margin: 0;
 }
+

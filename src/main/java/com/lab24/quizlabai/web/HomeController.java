@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -251,6 +250,23 @@ public class HomeController {
 
     }
 
+    @GetMapping("/students")
+    public String showEnrolledStudents(Model model,
+                                       @RequestParam(value = "search", required = false) String search,
+                                       @AuthenticationPrincipal User user
+    ) {
+        List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(user.getRole());
+        model.addAttribute("sidebarItems", sidebarItems);
+        model.addAttribute("username", user.getUsername());
+        if (user instanceof Professor professor) {
+            List<Student> students = subjectService.findStudentsForProfessor(professor, search);
+            model.addAttribute("students", students);
+            model.addAttribute("search", search);
+            return "studentsList";
+        } else {
+            return "redirect:/access-denied";
+        }
+    }
 
     @GetMapping("/study-materials")
     public String showMaterials(Model model, @AuthenticationPrincipal User user) {

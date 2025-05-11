@@ -126,8 +126,14 @@ public class SubjectController {
         return "redirect:/subjects/management";
     }
     @GetMapping("/{id}/assign-student")
-    public String showAssignStudentPage(@PathVariable Long id, Model model) {
+    public String showAssignStudentPage(@AuthenticationPrincipal User user, @PathVariable Long id, Model model) {
+        if (user.getRole() != Role.ROLE_PROFESSOR) {
+            return "redirect:/access-denied";
+        }
         Subject subject = subjectService.findById(id);
+        List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(user.getRole());
+        model.addAttribute("sidebarItems", sidebarItems);
+        model.addAttribute("username", user.getUsername());
         List<User> allStudents = userService.findAllStudents();
         model.addAttribute("subject", subject);
         model.addAttribute("allStudents", allStudents);
