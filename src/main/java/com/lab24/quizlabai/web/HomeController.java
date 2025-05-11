@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -225,11 +226,31 @@ public class HomeController {
         if (user instanceof Student student) {
             quizResults = quizResultService.getCompletedQuizResultsForStudent(student);
             model.addAttribute("quizResults", quizResults);
+            model.addAttribute("user", user);
             return "completedQuizzes";
         } else {
             return "redirect:/access-denied";
         }
     }
+
+    @GetMapping("/submitted-quizzes")
+    public String showSubmittedQuizzes(@AuthenticationPrincipal User user, Model model) {
+        List<SidebarItem> sidebarItems = SidebarItem.getVisibleItems(user.getRole());
+        model.addAttribute("sidebarItems", sidebarItems);
+        model.addAttribute("username", user.getUsername());
+        if (user instanceof Professor professor) {
+            List<QuizResult> quizResults = quizService.getQuizzesByCreator(professor).stream()
+                    .flatMap(quiz -> quizResultService.getQuizResultsByQuiz(quiz).stream())
+                    .toList();
+            model.addAttribute("quizResults", quizResults);
+            model.addAttribute("user", user);
+            return "completedQuizzes";
+        } else {
+            return "redirect:/access-denied";
+        }
+
+    }
+
 
     @GetMapping("/study-materials")
     public String showMaterials(Model model, @AuthenticationPrincipal User user) {

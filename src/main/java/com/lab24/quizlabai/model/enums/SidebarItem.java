@@ -11,7 +11,7 @@ public enum SidebarItem {
     GRADES("Grades", "📊", "/dashboard", Role.ROLE_PROFESSOR),
     AVAILABLE_QUIZZES("Available Quizzes", "📝", "/available-quizzes", Role.ROLE_STUDENT),
     CREATE_QUIZ("Create Quiz", "📝", "/quizgeneration", Role.ROLE_PROFESSOR),
-    SUBMITTED_QUIZZES("Submitted Quizzes", "📥️", "/dashboard", Role.ROLE_PROFESSOR),
+    SUBMITTED_QUIZZES("Submitted Quizzes", "📥️", "/submitted-quizzes", Role.ROLE_PROFESSOR),
     MANAGE_QUIZZES("Manage Quizzes", "✏️", "/quiz-management", Role.ROLE_PROFESSOR),
     MANAGE_SUBJECTS("Manage Subjects", "✏️", "/subject-management", Role.ROLE_PROFESSOR),
     COMPLETED_QUIZZES("Completed Quizzes", "✅", "/completed-quizzes", Role.ROLE_STUDENT),

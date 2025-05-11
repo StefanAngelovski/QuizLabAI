@@ -28,24 +28,19 @@ public class QuizResultServiceImpl implements QuizResultService {
 
     @Override
     @Transactional
-    public List<QuizResult> getAllResultsByStudent(Student student) {
-        return quizResultRepository.findByUser(student);
+    public List<QuizResult> getQuizResultsByQuiz(Quiz quiz) {
+        return quizResultRepository.findByQuizId(quiz.getId());
     }
 
-    @Override
-    @Transactional
-    public QuizResult findResultById(Long id) {
-        return quizResultRepository.findById(id).orElse(null);
-    }
 
     @Override
-    public QuizResult saveResult(Quiz quiz, User user, Double score, Double timeTaken) {
+    public void saveResult(Quiz quiz, User user, Double score, Double timeTaken) {
         QuizResult result = new QuizResult();
         result.setQuiz(quiz);
         result.setUser(user);
         result.setScore(score);
         result.setCompleted(true);
         result.setTimeSpent(timeTaken);
-        return quizResultRepository.save(result);
+        quizResultRepository.save(result);
     }
 }

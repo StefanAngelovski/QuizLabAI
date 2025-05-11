@@ -11,9 +11,6 @@ public interface QuizResultService {
 
     List<QuizResult> getCompletedQuizResultsForStudent(Student student);
 
-    List<QuizResult> getAllResultsByStudent(Student student);
-
-    QuizResult findResultById(Long id);
-
-    QuizResult saveResult(Quiz quiz, User user, Double score, Double timeTaken);
+    List<QuizResult> getQuizResultsByQuiz(Quiz quiz);
+    void saveResult(Quiz quiz, User user, Double score, Double timeTaken);
 }
