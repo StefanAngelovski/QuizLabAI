@@ -143,7 +143,7 @@
             <p>Date: <span th:text="${#dates.format(#dates.createNow(), 'dd.MM.yyyy')}"></span></p>
             <p>Quiz Time: <span th:text="${quizTime}">30:00</span></p>
             <p>Time Taken: <span th:text="${timeTaken}">18:00</span></p>
-            <p>Answered Questions: <span th:text="${answeredQuestions}">0</span>/<span th:text="${totalQuestions}">0</span></p>
+            <p>Answered Questions: <span th:text="${answeredQuestions}"></span>/<span th:text="${totalQuestions}"></span></p>
         </div>
 
         <div class="results-message">
@@ -176,7 +176,11 @@
         </tr>
         </tbody>
     </table>
-
+    <div class="mb-3">
+        <form action="/attempt/ai/export-pdf" method="get">
+            <button type="submit" class="btn btn-primary">Export Results as PDF</button>
+        </form>
+    </div>
     <div class="navigation">
         <a href="/dashboard" class="nav-btn">Back to Dashboard</a>
     </div>

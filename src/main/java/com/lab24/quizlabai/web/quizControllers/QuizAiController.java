@@ -3,18 +3,27 @@ package com.lab24.quizlabai.web.quizControllers;
 import com.lab24.quizlabai.model.*;
 import com.lab24.quizlabai.service.AzureAI.AzureOpenAIService;
 import com.lab24.quizlabai.service.QuizResultService;
+import com.lowagie.text.*;
+import com.lowagie.text.Font;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Controller
 @RequestMapping("/attempt/ai")
@@ -61,7 +70,10 @@ public class QuizAiController {
 
         int quizTime = quiz.getQuizTime();
         int totalQuestions = questions.size();
-        int answeredQuestions = (int) userAnswers.values().stream().filter(answers -> !answers.isEmpty()).count();
+        int answeredQuestions = (int) userAnswers.values().stream()
+                .filter(answers -> answers != null && answers.stream()
+                        .anyMatch(ans -> ans != null && !ans.trim().isEmpty() && !ans.equalsIgnoreCase("No Answer")))
+                .count();
 
         String aiEvaluationResults = azureOpenAIService.evaluateAnswersWithAI(questions, userAnswers);
         List<EvaluationResult> evaluationResults = parseEvaluationResults(aiEvaluationResults);
@@ -77,6 +89,13 @@ public class QuizAiController {
         model.addAttribute("timeTaken", timeTaken);
         model.addAttribute("answeredQuestions", answeredQuestions);
         model.addAttribute("totalQuestions", totalQuestions);
+
+        session.setAttribute("score", score);
+        session.setAttribute("totalQuestions", totalQuestions);
+        session.setAttribute("answeredQuestions", answeredQuestions);
+        session.setAttribute("evaluationResult", evaluationResults);
+        session.setAttribute("quiz", quiz);
+        session.setAttribute("timeTaken", timeTaken);
 
         return "quizResultAiPage";
     }
@@ -112,5 +131,80 @@ public class QuizAiController {
             }
         }
         return results;
+    }
+    @GetMapping("/export-pdf")
+    public void exportResultsToPdf(HttpSession session, HttpServletResponse response) throws IOException {
+
+        Quiz quiz = (Quiz) session.getAttribute("quiz");
+        List<EvaluationResult> evaluationResults = (List<EvaluationResult>) session.getAttribute("evaluationResult");
+        Integer score = (Integer) session.getAttribute("score");
+        String timeTaken = (String) session.getAttribute("timeTaken");
+        int totalQuestions = (int) session.getAttribute("totalQuestions");
+        int answeredQuestions = (int) session.getAttribute("answeredQuestions");
+
+        if (quiz == null || evaluationResults == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No quiz data available");
+            return;
+        }
+
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=\"quiz_results.pdf\"");
+
+        Document document = new Document(PageSize.A4);
+        PdfWriter.getInstance(document, response.getOutputStream());
+
+        document.open();
+
+        // Наслов
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
+        Paragraph title = new Paragraph("QuizLabAI - Quiz Results", titleFont);
+        title.setAlignment(Element.ALIGN_CENTER);
+        document.add(title);
+
+        document.add(new Paragraph(" "));
+
+
+        Font boldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
+        document.add(new Paragraph("Subject: " + quiz.getSubject().getName(), boldFont));
+        document.add(new Paragraph("Topic: " + (quiz.getTopic() != null ? quiz.getTopic() : "N/A"), boldFont));
+        document.add(new Paragraph("Score: " + score + " points", boldFont));
+        document.add(new Paragraph("Answered Questions: " + answeredQuestions + "/" + totalQuestions, boldFont));
+        document.add(new Paragraph("Time Taken: " + timeTaken, boldFont));
+        document.add(new Paragraph(" "));
+
+
+        PdfPTable table = new PdfPTable(4);
+        table.setWidthPercentage(100);
+        table.setWidths(new int[]{5, 3, 3, 5});
+
+        Stream.of("Question", "Your Answer", "Correct Answer", "Evaluation").forEach(headerTitle -> {
+            PdfPCell header = new PdfPCell();
+            header.setBackgroundColor(Color.LIGHT_GRAY);
+            header.setPhrase(new Phrase(headerTitle, boldFont));
+            header.setHorizontalAlignment(Element.ALIGN_CENTER);
+            header.setPadding(5);
+            table.addCell(header);
+        });
+
+        for (EvaluationResult eval : evaluationResults) {
+            PdfPCell questionCell = new PdfPCell(new Phrase(eval.getQuestionText()));
+            PdfPCell userAnswerCell = new PdfPCell(new Phrase(eval.getUserAnswer() != null ? eval.getUserAnswer() : "No Answer"));
+            PdfPCell correctAnswerCell = new PdfPCell(new Phrase(eval.getCorrectAnswer()));
+            PdfPCell evaluationCell = new PdfPCell(new Phrase(eval.getExplanation()));
+
+            if (eval.isCorrect()) {
+                userAnswerCell.setBackgroundColor(new Color(212, 237, 218));
+            } else {
+                userAnswerCell.setBackgroundColor(new Color(248, 215, 218));
+            }
+
+            table.addCell(questionCell);
+            table.addCell(userAnswerCell);
+            table.addCell(correctAnswerCell);
+            table.addCell(evaluationCell);
+        }
+
+        document.add(table);
+        document.close();
     }
 }

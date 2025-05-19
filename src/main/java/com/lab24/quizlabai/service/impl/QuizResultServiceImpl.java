@@ -1,9 +1,6 @@
 package com.lab24.quizlabai.service.impl;
 
-import com.lab24.quizlabai.model.Quiz;
-import com.lab24.quizlabai.model.QuizResult;
-import com.lab24.quizlabai.model.Student;
-import com.lab24.quizlabai.model.User;
+import com.lab24.quizlabai.model.*;
 import com.lab24.quizlabai.repository.QuizResultRepository;
 import com.lab24.quizlabai.service.QuizResultService;
 import jakarta.transaction.Transactional;

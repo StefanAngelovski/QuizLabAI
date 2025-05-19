@@ -33,29 +33,24 @@ public class QuizNavigationController {
             session.setAttribute("quizTime", quizTime);
         }
 
-        if (quizTime <= 0) {
+        if (quizTime == null || quizTime <= 0) {
             return "redirect:/attempt/result/" + session.getAttribute("quizId");
         }
 
         processAnswer(session, selectedOptions, shortAnswer);
 
-
         List<Question> questions = (List<Question>) session.getAttribute("quizQuestions");
         Integer index = (Integer) session.getAttribute("currentQuestionIndex");
 
-        if (questions == null || index == null || index >= questions.size()) {
-            return "redirect:/attempt/result/" + session.getAttribute("quizId");
+        if (questions == null || index == null) {
+            return "redirect:/error";
         }
-
-
         index++;
         session.setAttribute("currentQuestionIndex", index);
 
-        // Check if it's the last question
         if (index >= questions.size()) {
             return "redirect:/attempt/result/" + session.getAttribute("quizId");
         }
-
 
         model.addAttribute("question", questions.get(index));
         model.addAttribute("quiz", session.getAttribute("quiz"));
@@ -63,8 +58,10 @@ public class QuizNavigationController {
         model.addAttribute("totalQuestions", questions.size());
         model.addAttribute("isLastQuestion", index == questions.size() - 1);
         model.addAttribute("quizTime", quizTime);
+
         return "quizPage1";
     }
+
     @PostMapping("/result/{quizId}")
     public String submitLastQuestion(@RequestParam(value = "selectedOptions", required = false) List<String> selectedOptions,
                                      @RequestParam(value = "shortAnswer", required = false) String shortAnswer,

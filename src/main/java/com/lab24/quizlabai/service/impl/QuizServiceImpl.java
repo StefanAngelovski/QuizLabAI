@@ -8,6 +8,9 @@ import com.lab24.quizlabai.repository.SubjectRepository;
 import com.lab24.quizlabai.repository.UserRepository;
 import com.lab24.quizlabai.service.AzureAI.AzureOpenAIService;
 import com.lab24.quizlabai.service.QuizService;
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.draw.LineSeparator;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -132,7 +137,6 @@ public class QuizServiceImpl implements QuizService {
         return dto;
     }
 
-
     @Override
     public void deleteQuiz(Long id) {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -161,4 +165,5 @@ public class QuizServiceImpl implements QuizService {
         }
         return quizzes;
     }
+
 }

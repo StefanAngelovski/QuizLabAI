@@ -139,16 +139,24 @@
 
             <div class="user-answer">
                 <strong>Your Answer:</strong>
-                <span th:if="${userAnswers[question.id] != null}">
-                    <span th:text="${userAnswers[question.id]}"></span>
-                </span>
-                <span th:if="${userAnswers[question.id] == null}" class="no-answer">No Answer</span>
+                <span th:if="${userAnswers[question.id] == null || #lists.isEmpty(userAnswers[question.id])}">
+            <span class="no-answer">No Answer</span>
+        </span>
+                <span th:if="${userAnswers[question.id] != null && !#lists.isEmpty(userAnswers[question.id])}">
+            <span th:text="${#strings.arrayJoin(userAnswers[question.id], ', ')}"></span>
+        </span>
             </div>
 
-            <div th:if="${userAnswers[question.id] != null}" class="answered">
+            <div th:if="${userAnswers[question.id] != null
+                && !#lists.isEmpty(userAnswers[question.id])
+                && !(userAnswers[question.id].size() == 1 && userAnswers[question.id][0] == 'No Answer')}"
+                 class="answered">
                 <span>Answered</span>
             </div>
-            <div th:if="${userAnswers[question.id] == null}" class="not-answered">
+            <div th:if="${userAnswers[question.id] == null
+                || #lists.isEmpty(userAnswers[question.id])
+                || (userAnswers[question.id].size() == 1 && userAnswers[question.id][0] == 'No Answer')}"
+                 class="not-answered">
                 <span>Not Answered</span>
             </div>
         </div>

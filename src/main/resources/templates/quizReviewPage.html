@@ -174,7 +174,6 @@
         </div>
 
         <div class="question-body">
-            <!-- MULTIPLE CHOICE QUESTIONS -->
             <div class="options-grid" th:if="${question.type == 'Multiple Choice'}">
                 <div th:each="option : ${question.options}"
                      class="option-item"
@@ -184,7 +183,6 @@
                 </div>
             </div>
 
-            <!-- FIXED CHOICE QUESTIONS -->
             <div class="options-grid" th:if="${question.type == 'Fixed Choice'}">
                 <div th:each="option : ${question.options}"
                      class="option-item"
@@ -216,6 +214,15 @@
         </div>
     </div>
 
+
+    <div class="navigation mt-3">
+        <a class="nav-btn btn btn-primary"
+           th:href="@{/attempt/result/export-pdf/{quizId}(quizId=${quiz.id})}"
+           target="_blank"
+           role="button">
+            Export to PDF
+        </a>
+    </div>
     <div class="navigation">
         <a class="nav-btn btn btn-secondary" th:href="@{/attempt/result/{quizId}(quizId=${quizId})}">Go to Results</a>
     </div>

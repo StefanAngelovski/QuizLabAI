@@ -12,4 +12,5 @@ import java.util.List;
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
     List<Quiz> findByCreator(Professor creator);
     List<Quiz> findBySubject(Subject subject);
+
 }

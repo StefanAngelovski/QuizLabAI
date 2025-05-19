@@ -5,7 +5,7 @@ import com.lab24.quizlabai.dto.QuizResponseDto;
 import com.lab24.quizlabai.model.Quiz;
 import com.lab24.quizlabai.service.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,5 +47,4 @@ public class QuizRestController {
         Quiz quiz = quizService.getQuizById(quizId);
         return quiz != null ? ResponseEntity.ok(quiz) : ResponseEntity.notFound().build();
     }
-
 }

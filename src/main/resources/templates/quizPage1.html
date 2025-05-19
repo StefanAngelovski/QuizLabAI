@@ -246,28 +246,30 @@
 
 <script th:inline="javascript">
     let quizId = [[${quiz.id}]];
-    let quizTimeInMinutes = [[${quizTime}]];
+    let quizTimeInSeconds = [[${quizTime}]];
     let storedQuizId = localStorage.getItem('quizId');
 
     if (storedQuizId !== quizId.toString()) {
         localStorage.setItem('quizId', quizId);
-        localStorage.setItem('timeInSeconds', quizTimeInMinutes * 60);
+        localStorage.setItem('timeInSeconds', quizTimeInSeconds);
     }
 
-    let timeInSeconds = parseInt(localStorage.getItem('timeInSeconds'));
+    let timeInSeconds = parseInt(localStorage.getItem('timeInSeconds')) || quizTimeInSeconds;
     const timerElement = document.getElementById('time');
 
     function updateTimer() {
-        const minutes = Math.floor(timeInSeconds / 60);
-        const seconds = timeInSeconds % 60;
-        timerElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        let minutes = Math.floor(timeInSeconds / 60);
+        let seconds = timeInSeconds % 60;
+
+        let formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        timerElement.textContent = formattedTime;
 
         if (timeInSeconds > 0) {
             timeInSeconds--;
             localStorage.setItem('timeInSeconds', timeInSeconds);
             setTimeout(updateTimer, 1000);
         } else {
-            alert('Time is up!');
+            alert('Времето истече!');
             localStorage.removeItem('timeInSeconds');
             localStorage.removeItem('quizId');
             document.getElementById('quizSubmitForm').submit();
@@ -276,6 +278,7 @@
 
     updateTimer();
 </script>
+
 
 </body>
 </html>
