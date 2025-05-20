@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizLabAI - Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ff0000;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .results-title {
+            margin-bottom: 20px;
+            font-weight: normal;
+            color: #333;
+        }
+
+        .results-card {
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        .results-info p {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .results-message {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            background-color: #6c757d;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        footer {
+            margin-top: auto;
+            width: 100%;
+            background-color: #000;
+            color: #fff;
+            padding: 20px 0;
+        }
+
+        .results-table th, .results-table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        .correct {
+            background-color: #d4edda;
+        }
+
+        .incorrect {
+            background-color: #f8d7da;
+        }
+
+        .no-answer {
+            color: #ff9800;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">QuizLabAI</div>
+    <div class="user-profile">
+        <span>User</span>
+        <img src="https://via.placeholder.com/30" alt="Profile" class="rounded-circle">
+    </div>
+</div>
+
+<div class="container">
+    <h5 class="results-title">AI Evaluation Results</h5>
+
+    <div class="results-card">
+        <div class="results-info">
+            <p>Date: <span th:text="${#dates.format(#dates.createNow(), 'dd.MM.yyyy')}"></span></p>
+            <p>Quiz Time: <span th:text="${quizTime}">30:00</span></p>
+            <p>Time Taken: <span th:text="${timeTaken}">18:00</span></p>
+            <p>Answered Questions: <span th:text="${answeredQuestions}"></span>/<span th:text="${totalQuestions}"></span></p>
+        </div>
+
+        <div class="results-message">
+            <p th:text="'Score: ' + ${score} + ' points'"></p>
+        </div>
+    </div>
+
+    <h5>Evaluation Details:</h5>
+    <table class="table table-bordered results-table">
+        <thead>
+        <tr>
+            <th>Question</th>
+            <th>Your Answer</th>
+            <th>Correct Answer</th>
+            <th>Evaluation</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${evaluationResult == null or #lists.isEmpty(evaluationResult)}">
+            <td colspan="4" class="text-center">No evaluation results available</td>
+        </tr>
+        <tr th:each="eval : ${evaluationResult}"
+            th:class="${eval.correct ? 'correct' : 'incorrect'}">
+            <td th:text="${eval.questionText}">Question</td>
+            <td th:text="${eval.userAnswer != null ? eval.userAnswer : 'No Answer'}"
+                th:class="${eval.userAnswer == null or eval.userAnswer.isEmpty() ? 'no-answer' : ''}">
+            </td>
+            <td th:text="${eval.correctAnswer}">Correct Answer</td>
+            <td th:text="${eval.explanation}">Feedback</td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="mb-3">
+        <form action="/attempt/ai/export-pdf" method="get">
+            <button type="submit" class="btn btn-primary">Export Results as PDF</button>
+        </form>
+    </div>
+    <div class="navigation">
+        <a href="/dashboard" class="nav-btn">Back to Dashboard</a>
+    </div>
+</div>
+
+<footer>
+    <div class="text-center">
+        <p class="mb-0">© 2025 QuizLab AI. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Fragments</title>
+</head>
+<body>
+
+<!-- Navbar Fragment -->
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/home">QuizLab AI</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/statistics">Quiz Statistics</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/quiz-management">Quiz Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/student-progress">Student Progress</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/register">Register</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar Fragment -->
+<div th:fragment="sidebar" class="sidebar bg-light d-none d-md-block"
+     th:if="${#authorization.expression('isAuthenticated()')}">
+    <div class="d-flex flex-column flex-shrink-0 p-3">
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a th:href="@{/dashboard}" class="nav-link sidebar">
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a th:href="@{/statistics}" class="nav-link sidebar">
+                    Statistics
+                </a>
+            </li>
+            <li class="nav-item">
+                <a th:href="@{/quizManagement}" class="nav-link sidebar">
+                    Quiz Management
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Mobile Sidebar Toggle Button -->
+<div th:fragment="sidebarToggle" class="d-md-none"
+     th:if="${#authorization.expression('isAuthenticated()')}">
+    <button class="btn btn-primary sidebar-toggle" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#sidebar" aria-controls="sidebar">
+        <i class="bi bi-list"></i> Menu
+    </button>
+</div>
+
+
+<div th:fragment="mobileSidebar" class="offcanvas offcanvas-start" tabindex="-1" id="sidebar"
+     th:if="${#authorization.expression('isAuthenticated()')}">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Menu</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a th:href="@{/dashboard}" class="nav-link sidebar">
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a th:href="@{/statistics}" class="nav-link sidebar">
+                    Statistics
+                </a>
+            </li>
+            <li class="nav-item">
+                <a th:href="@{/quizManagement}" class="nav-link sidebar">
+                    Quiz Management
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Footer Fragment -->
+<footer th:fragment="footer" class="py-1">
+    <div class="container text-center">
+        <p class="mb-0">© 2025 QuizLab AI. All rights reserved.</p>
+    </div>
+</footer>
+
+</body>
+</html>

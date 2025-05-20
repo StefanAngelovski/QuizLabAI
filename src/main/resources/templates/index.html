@@ -1,10 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Hello World</title>
-</head>
-<body>
-    <h1>Hello World</h1>
-</body>
-</html>
+<div th:replace="~{layout :: html(~{::title}, ~{::main}, ~{}, ~{})}">
+    <title>QuizLab AI - Home</title>
+    <main>
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4" style="color: black;">Welcome to QuizLab AI1</h1>
+                <p class="lead mb-4" style="color: black;">QuizLab AI is your ultimate platform for creating, managing, and taking quizzes. Our intelligent system helps educators track student progress and provides personalized learning experiences.</p>
+                <p style="color: black;">Whether you're a teacher looking to assess your students or a student wanting to test your knowledge, QuizLab AI has you covered. Join thousands of users who are transforming the way they learn and teach.</p>
+                <div class="d-grid gap-2 d-md-flex mt-4">
+                    <a href="/register" class="btn btn-primary btn-lg px-4 me-md-2">Get Started</a>
+                    <a href="/login" class="btn btn-outline-primary btn-lg px-4">Login</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <img th:src="@{/images/img.png}" alt="QuizLab AI Illustration" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </main>
+</div>

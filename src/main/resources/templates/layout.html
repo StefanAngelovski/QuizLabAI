@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="html(title, main, extraStyles, extraScripts)">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:replace="${title}">QuizLab AI</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    html, body {
+      height: 100%;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background-color: white;
+    }
+    main {
+      flex: 1 0 auto;
+    }
+    .navbar {
+      background-color: #d9534f !important;
+    }
+    .btn-primary {
+      background-color: #d9534f;
+      border-color: #d9534f;
+    }
+    .btn-primary:hover {
+      background-color: #c9302c;
+      border-color: #c9302c;
+    }
+    .btn-outline-primary {
+      color: #d9534f;
+      border-color: #d9534f;
+    }
+    .btn-outline-primary:hover {
+      background-color: #d9534f;
+      color: white;
+    }
+
+    .nav-link.sidebar{
+      color: black !important;
+      font-size: 1.2rem;
+    }
+
+    .sidebar .nav-item {
+      width: 100%;
+      display: block;
+    }
+
+    .sidebar .nav-link.sidebar {
+      display: block;
+      width: 100%;
+      margin-bottom: 5px;
+    }
+
+    footer {
+      background-color: black;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .content {
+      margin-left: 250px;
+    }
+
+    /* Sidebar styles */
+    .sidebar {
+      width: 250px;
+      top: 56px;
+      bottom: 0;
+      left: 0;
+      padding: 20px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+
+    .content {
+      margin-left: 0;
+    }
+
+    @media (min-width: 768px) {
+      .content {
+        margin-left: 10rem;
+      }
+    }
+
+    .sidebar-toggle {
+      margin-top:1.25rem;
+      margin-left: 0.6rem;
+    }
+
+  </style>
+
+  <th:block th:replace="${extraStyles}"></th:block>
+</head>
+<body class="d-flex flex-column h-100">
+
+
+<div th:replace="fragments :: navbar"></div>
+
+<!-- Toggle button -->
+<div th:if="${#authorization.expression('isAuthenticated()')}" th:replace="~{fragments :: sidebarToggle}"></div>
+
+<div class="flex-grow-1 d-flex">
+  <!-- Regular sidebar (hidden on mobile) -->
+  <div th:replace="~{fragments :: sidebar}"></div>
+
+  <!-- Main content -->
+  <main th:class="${#authorization.expression('isAuthenticated()')} ?
+                 'content container my-5 flex-grow-1' :
+                 'container my-5 flex-grow-1'">
+    <!-- content-->
+    <div th:replace="${main}"></div>
+  </main>
+</div>
+
+<!-- Mobile sidebar (offcanvas) -->
+<div th:replace="~{fragments :: mobileSidebar}"></div>
+
+<footer class="footer mt-auto py-3">
+  <div th:replace="fragments :: footer"></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<th:block th:replace="${extraScripts}"></th:block>
+</body>
+</html>

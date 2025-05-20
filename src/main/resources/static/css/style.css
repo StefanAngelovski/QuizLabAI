@@ -1,0 +1,404 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.logo-icon {
+    font-size: 24px;
+    margin-right: 5px;
+}
+
+.logo-text span {
+    color: #ff0000;
+}
+
+.nav-links {
+    display: flex;
+    gap: 30px;
+
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ff0000;
+}
+
+.user-icon {
+    font-size: 28px;
+}
+
+.container {
+    display: flex;
+    min-height: calc(100vh - 60px);
+}
+
+.sidebar {
+    width: 200px;
+    background-color: #f8f8f8;
+    padding: 20px 10px;
+    border-right: 1px solid #e0e0e0;
+}
+
+.sidebar-item {
+    padding: 10px 0 10px 10px;
+    margin-bottom: 5px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.sidebar-item a {
+    padding: 0;
+    text-align: left;
+    font-weight: normal;
+}
+
+.sidebar-item:hover {
+    background-color: #e8e8e8;
+}
+
+.sidebar-item i {
+    margin-right: 10px;
+}
+
+.sidebar-item.active {
+    background-color: #e0e0e0;
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+}
+
+.breadcrumb {
+    margin-bottom: 20px;
+    color: #666;
+    font-size: 14px;
+}
+
+.breadcrumb a {
+    color: #666;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+}
+
+.btn-success {
+    background-color: #4CAF50;
+}
+
+.profile{
+    border-radius: 5px;
+    background-color: white;
+}
+
+.profile-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 5px;
+    border-top: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.profile-picture-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.profile-picture {
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.picture-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.profile-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.font {
+    font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+textarea.form-control {
+    height: 100px;
+    resize: none;
+}
+
+.form-actions {
+    grid-column: 1 / span 2;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-danger {
+    background-color: #f44336;
+}
+
+.logout {
+    margin-top: auto;
+    padding: 15px 10px;
+    display: flex;
+    align-items: center;
+    color: #333;
+    cursor: pointer;
+}
+
+.logout i {
+    margin-right: 10px;
+}
+
+.export-btn {
+    background-color: rgb(255, 207, 207);
+    color: #ff0000;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+.export-btn:hover {
+    background-color: rgb(255, 182, 182);
+}
+
+.upgrade-plan-btn {
+    background-color: palegreen;
+    color: #2d792e;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+.upgrade-plan-btn:hover {
+    background-color: #75ff75;
+}
+
+/* Progress Steps */
+.progress-steps {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.step {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    margin: 0 5px;
+    position: relative;
+}
+
+.step.active {
+    background-color: #ff0000;
+}
+
+.step::before {
+    content: '';
+    position: absolute;
+    height: 2px;
+    width: 100px;
+    background-color: #ccc;
+    top: 50%;
+    right: 40px;
+    transform: translateY(-50%);
+    z-index: -1;
+}
+
+.step:first-child::before {
+    display: none;
+}
+
+.step::after {
+    content: '';
+    position: absolute;
+    height: 2px;
+    width: 100px;
+    background-color: #ccc;
+    top: 50%;
+    left: 40px;
+    transform: translateY(-50%);
+    z-index: -1;
+}
+
+.step:last-child::after {
+    display: none;
+}
+
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.student-table th {
+    background-color: #000066;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+.student-table td {
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.student-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 10px;
+}
+
+.progress-bar.green {
+    background-color: #4CAF50;
+}
+
+.progress-bar.yellow {
+    background-color: #FFC107;
+}
+
+.progress-bar.red {
+    background-color: #F44336;
+}
+
+.more-info-btn {
+    background-color: #000066;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.more-info-btn:hover {
+    background-color: rgba(1, 1, 103, 0.82);
+}
+
+.manage-quizzes {
+    padding: 10px;
+    color: #666;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.user-name-placeholder {
+    color: #FF6347;
+    font-style: italic;
+    font-weight: bold;
+}
+
+footer {
+    background-color: black;
+    color: white;
+    padding: 16px 0;
+    text-align: center;
+}
+
+footer p {
+    margin: 0;
+}
+

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizLabAI - Review</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-text span {
+            color: #007bff;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #ff0000;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .quiz-title {
+            margin-bottom: 20px;
+            font-weight: normal;
+            color: #333;
+        }
+
+        .question-card {
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .question-header {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .question-type {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .question-body {
+            padding: 15px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .option-correct {
+            background-color: #d4edda;
+        }
+
+        .option-incorrect {
+            background-color: #f8d7da;
+        }
+
+        .user-selected {
+            border: 2px solid #007bff;
+        }
+
+        .points {
+            background-color: #e0e0e0;
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            background-color: #d3d3d3;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+        }
+
+        footer {
+            margin-top: auto;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+<div class="header">
+    <div class="logo">
+        <div class="logo-icon">🎓</div>
+        <div class="logo-text">Quiz<span>LabAI</span></div>
+    </div>
+    <div class="page-title">Quiz Review</div>
+    <div class="user-profile">
+        <div class="user-icon">👤</div>
+        <div>Tarun ▼</div>
+    </div>
+</div>
+
+<div class="container">
+    <h5 class="quiz-title" th:text="${quiz.topic} + ' - Review'">Quiz Review</h5>
+
+    <div th:each="question, iterStat : ${quizQuestions}" class="question-card">
+        <div class="question-header">
+            <div class="question-title" th:text="'Question ' + ${iterStat.index + 1} + ': ' + ${question.text}">Sample Question</div>
+            <div class="question-type" th:text="'Type: ' + ${question.type}">Question Type</div>
+        </div>
+
+        <div class="question-body">
+            <div class="options-grid" th:if="${question.type == 'Multiple Choice'}">
+                <div th:each="option : ${question.options}"
+                     class="option-item"
+                     th:class="${(question.correctAnswer.contains(option) ? 'option-correct' : '') +
+                     (userAnswers[question.id] != null and userAnswers[question.id].contains(option) ? ' user-selected' : '')}">
+                    <label th:text="${option}">Option</label>
+                </div>
+            </div>
+
+            <div class="options-grid" th:if="${question.type == 'Fixed Choice'}">
+                <div th:each="option : ${question.options}"
+                     class="option-item"
+                     th:class="${(question.correctAnswer == option ? 'option-correct' : '') +
+                     (userAnswers[question.id] != null and userAnswers[question.id][0] == option ? ' user-selected' : '')}">
+                    <label th:text="${option}">Option</label>
+                </div>
+            </div>
+
+
+            <div th:if="${question.type == 'Short Answer'}">
+                <p><strong>Your Answer:</strong>
+                    <span th:text="${userAnswers[question.id] != null and !userAnswers[question.id].isEmpty() ? userAnswers[question.id][0] : 'No Answer'}"></span>
+                </p>
+                <p><strong>Correct Answer:</strong>
+                    <span th:text="${question.correctAnswer}"></span>
+                </p>
+            </div>
+
+
+            <div>
+                <p th:if="${questionScoreMap[question.id] > 0}" class="text-success fw-bold">✔</p>
+                <p th:if="${questionScoreMap[question.id] == 0}" class="text-danger fw-bold">✘</p>
+            </div>
+
+            <div class="points mt-2">
+                <span th:text="'Points Earned: ' + ${questionScoreMap[question.id]} + ' / ' + ${question.points}">Points</span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="navigation mt-3">
+        <a class="nav-btn btn btn-primary"
+           th:href="@{/attempt/result/export-pdf/{quizId}(quizId=${quiz.id})}"
+           target="_blank"
+           role="button">
+            Export to PDF
+        </a>
+    </div>
+    <div class="navigation">
+        <a class="nav-btn btn btn-secondary" th:href="@{/attempt/result/{quizId}(quizId=${quizId})}">Go to Results</a>
+    </div>
+</div>
+
+<footer class="bg-black py-4 text-white">
+    <div class="text-center">
+        <p class="mb-0">© 2025 QuizLab AI. All rights reserved.</p>
+    </div>
+</footer>
+</body>
+</html>
