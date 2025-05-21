@@ -7,6 +7,7 @@ import com.lab24.quizlabai.model.enums.SidebarItem;
 import com.lab24.quizlabai.service.QuizResultService;
 import com.lab24.quizlabai.service.QuizService;
 
+import com.lab24.quizlabai.service.QuizStatisticsService;
 import com.lab24.quizlabai.service.SubjectService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

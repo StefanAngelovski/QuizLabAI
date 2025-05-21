@@ -1,6 +1,8 @@
 package com.lab24.quizlabai.model;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class QuizStatistics {
@@ -19,6 +21,9 @@ public class QuizStatistics {
     private double lowestScore;
     private double completionRate;
     private double averageTimeSpent;
+
+    @Transient
+    private List<LeaderboardEntry> leaderboard = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -83,6 +88,39 @@ public class QuizStatistics {
     public void setAverageTimeSpent(double averageTimeSpent) {
         this.averageTimeSpent = averageTimeSpent;
     }
+
+    public List<LeaderboardEntry> getLeaderboard() {
+        return leaderboard;
+    }
+
+    public void setLeaderboard(List<LeaderboardEntry> leaderboard) {
+        this.leaderboard = leaderboard;
+    }
+
+    // Helper class for leaderboard entries
+    public static class LeaderboardEntry {
+        private String studentName;
+        private double score;
+
+        public LeaderboardEntry(String studentName, double score) {
+            this.studentName = studentName;
+            this.score = score;
+        }
+
+        public String getStudentName() {
+            return studentName;
+        }
+
+        public void setStudentName(String studentName) {
+            this.studentName = studentName;
+        }
+
+        public double getScore() {
+            return score;
+        }
+
+        public void setScore(double score) {
+            this.score = score;
+        }
+    }
 }
-
-

@@ -9,9 +9,7 @@ import com.lab24.quizlabai.service.QuizStatisticsService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class QuizStatisticsServiceImpl implements QuizStatisticsService {
@@ -33,7 +31,7 @@ public class QuizStatisticsServiceImpl implements QuizStatisticsService {
         double lowestScore = Double.MAX_VALUE;
         int completedAttempts = 0;
         double totalTimeSpent = 0;
-        List<Map<String, Object>> leaderboard = new ArrayList<>();
+        List<QuizStatistics.LeaderboardEntry> leaderboard = new ArrayList<>();
 
         for (QuizResult result : quizResults) {
             double score = result.getScore();
@@ -51,27 +49,39 @@ public class QuizStatisticsServiceImpl implements QuizStatisticsService {
                 completedAttempts++;
             }
 
-            totalTimeSpent += result.getTimeSpent();
+            // Time validation - cap at quiz time limit
+            double timeSpent = Math.min(result.getTimeSpent(), quiz.getQuizTime());
+            totalTimeSpent += timeSpent;
 
-            Map<String, Object> leaderboardEntry = new HashMap<>();
-            leaderboardEntry.put("studentName", result.getUser().getFirstName() + " " + result.getUser().getLastName());
-            leaderboardEntry.put("score", score);
-
-            leaderboard.add(leaderboardEntry);
+            // Add entry to leaderboard with proper LeaderboardEntry object
+            String studentName = result.getUser().getFirstName() + " " + result.getUser().getLastName();
+            leaderboard.add(new QuizStatistics.LeaderboardEntry(studentName, score));
         }
 
-        //leaderboard
-        leaderboard.sort((entry1, entry2) -> Double.compare((double) entry2.get("score"), (double) entry1.get("score")));
+        // Handle empty results case
+        if (totalAttempts == 0) {
+            lowestScore = 0;
+        }
 
+        // Sort leaderboard by score in descending order
+        leaderboard.sort((entry1, entry2) -> Double.compare(entry2.getScore(), entry1.getScore()));
 
-        //completion rate and average time spent
+        // Limit leaderboard to top 10 entries if needed
+        if (leaderboard.size() > 10) {
+            leaderboard = leaderboard.subList(0, 10);
+        }
+
+        // Completion rate and average time spent
         double completionRate = totalAttempts == 0 ? 0 : (completedAttempts / (double) totalAttempts) * 100;
         double averageTimeSpent = totalAttempts == 0 ? 0 : totalTimeSpent / totalAttempts;
 
-        //average score
+        // Round to one decimal place for consistency
+        averageTimeSpent = Math.round(averageTimeSpent * 10.0) / 10.0;
+
+        // Average score
         double averageScore = totalAttempts == 0 ? 0 : totalScore / totalAttempts;
 
-        //QuizStatistics object
+        // Create and populate QuizStatistics object
         QuizStatistics stats = new QuizStatistics();
         stats.setQuiz(quiz);
         stats.setTotalAttempts(totalAttempts);
@@ -80,6 +90,7 @@ public class QuizStatisticsServiceImpl implements QuizStatisticsService {
         stats.setLowestScore(lowestScore);
         stats.setCompletionRate(completionRate);
         stats.setAverageTimeSpent(averageTimeSpent);
+        stats.setLeaderboard(leaderboard);
 
         return stats;
     }

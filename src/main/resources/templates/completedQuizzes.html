@@ -29,26 +29,28 @@
                     <div th:each="quizResult : ${quizResults}" class="col-12 col-md-4 col-lg-4 mt-3">
                         <div class="card h-100 shadow-sm text-center">
                             <div class="card-body d-flex flex-column justify-content-between">
-                                <div>
-                                    <i>✅</i>
-                                    <h4 th:text="${quizResult.quiz.subject.name}">Quiz Subject</h4>
-                                    <p th:text="${quizResult.quiz.topic}">Topic</p>
-                                    <p th:text="'Questions: ' + ${quizResult.quiz.numQuestions}">Number of Questions</p>
-                                    <p><strong>Score:</strong> <span th:text="${quizResult.score}">Score</span></p>
-                                    <p><strong>Time Spent:</strong> <span
-                                            th:text="${quizResult.getFormattedTimeSpent()}">Time Spent</span></p>
+                                <a th:href="@{/attempt/result/{quizId}/statistics (quizId=${quizResult.quiz.id})}" style="text-decoration: none; color: inherit;">
+                                    <div>
+                                        <i>✅</i>
+                                        <h4 th:text="${quizResult.quiz.subject.name}">Quiz Subject</h4>
+                                        <p th:text="${quizResult.quiz.topic}">Topic</p>
+                                        <p th:text="'Questions: ' + ${quizResult.quiz.numQuestions}">Number of Questions</p>
+                                        <p><strong>Score:</strong> <span th:text="${quizResult.score}">Score</span></p>
+                                        <p><strong>Time Spent:</strong> <span
+                                                th:text="${quizResult.getFormattedTimeSpent()}">Time Spent</span></p>
 
-                                    <div th:if="${user.getRole() == T(com.lab24.quizlabai.model.Role).ROLE_PROFESSOR}">
-                                        <p>
-                                            <strong>Student:</strong>
-                                            <span th:text="${(quizResult.user.firstName != null and quizResult.user.lastName != null) ?
+                                        <div th:if="${user.getRole() == T(com.lab24.quizlabai.model.Role).ROLE_PROFESSOR}">
+                                            <p>
+                                                <strong>Student:</strong>
+                                                <span th:text="${(quizResult.user.firstName != null and quizResult.user.lastName != null) ?
                                             quizResult.user.firstName + ' ' + quizResult.user.lastName + ' - ' + quizResult.user.getUsername() :
                                             quizResult.user.getUsername()}">
                                             Student Name
                                             </span>
-                                        </p>
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
+                                </a>
                             </div>
                         </div>
                     </div>
